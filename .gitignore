@@ -1,0 +1,29 @@
+*_files/
+*_cache/
+*.html
+.quarto
+/.quarto/
+
+## TeX
+*.aux
+*.synctex.gz
+*.fls
+*.fdb_latexmk
+*.log
+*.pdf
+
+
+## Temp
+tmp/
+dev/
+
+# Ignore during dev
+docs/
+figures/*.svg
+figures/*.png
+
+# R Environment Variables
+.Renviron
+
+# Docker
+docker/

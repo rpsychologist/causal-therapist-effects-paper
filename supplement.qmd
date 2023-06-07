@@ -1,0 +1,820 @@
+---
+title: "A Causal Inference Perspective on Therapist Effects---Online Supplement"
+author: 
+  - name: Kristoffer Magnusson
+    orcid: 0000-0003-0713-0556
+    email: kristoffer.magnusson@ki.se
+    url: https://rpsychologist.com
+    affiliations:
+      - name: Centre for Psychiatry Research, Department of Clinical Neuroscience, Karolinska Institutet, & Stockholm Health Care Services, Region Stockholm
+date: now
+toc: true
+toc-depth: 2
+code-fold: false
+code-tools: 
+    source: https://github.com/rpsychologist/causal-therapist-effects-paper/blob/main/supplement.qmd
+html-math-method: katex
+format:
+    html: 
+        output-file: index.html
+    pdf: 
+        output-file: magnusson-2023-causal-therapist-effects.pdf
+---
+
+## Introduction
+This online supplement for *A Causal Inference Perspective on Therapist Effects* (Magnusson, 2023, in preparation) contains the code for all calculations, simulations, and figures presented in the article.
+
+- [Preprint]()
+- [GitHub repository](https://github.com/rpsychologist/causal-therapist-effects-paper/)
+- [OSF repository](https://osf.io/qfw23/)
+- [Interactive visualization](https://rpsychologist.com/therapist-effects)
+
+::: {.content-visible when-format="pdf"}
+An HTML version of this document can also be viewed at [https://rpsychologist.github.io/causal-therapist-effects-paper](https://rpsychologist.github.io/causal-therapist-effects-paper)
+:::
+
+```{r, setup}
+#| warning: false
+knitr::opts_chunk$set(
+    message = FALSE,
+    warning = FALSE,
+    cache = TRUE
+)
+```
+
+```{r, packages}
+library(ggplot2)
+library(readr)
+library(dplyr)
+library(tidyr)
+library(purrr)
+library(powerlmm)
+library(knitr)
+library(parallel)
+library(lme4)
+library(lmerTest)
+library(svglite)
+```
+
+## Therapist-Outcome Confounding Simulation
+
+The functions below were used to simulate a data set with therapist effects and a therapist-outcome confounder.
+
+```{r, sim-function}
+#| code-fold: false
+
+#' Get the mean difference between prognostic groups
+#' 
+#' @param sd the SD added to the therapist level due to the confounder
+#' @param n2 the number of patients per therapist
+#' 
+#' @returns the mean difference between the two binary groups
+#' @examples
+#' n2 <- 50
+#' M <- solve_for_mean(0.075, n2)
+#' # we solve for M in this
+#' sd(c(rep(0, n2), rep(M, n2)))
+solve_for_mean <- function(sd, n2) {
+    2 * sqrt(sd^2 * (n2 * 2 - 1) / (n2 * 2))
+}
+
+#' Get the therapist SD from thee ICC
+#' 
+#' @param icc the ICC
+#' @param sd_error the error SD
+#' 
+#' @returns the random therapist SD
+get_therapist_sd_from_icc <- function(icc, sd_error) {
+    (sqrt(icc) * sd_error) / (sqrt(1 - icc))
+}
+
+#' Simulate confounded therapist effects 
+#' 
+#' @param n1
+#' @param n2
+#' @param sd_therapist
+#' @param sd_therapist_confounding
+#' @param sd_error
+#' @param ATE
+#' 
+#' @returns a data.frame
+simulate_therapist_effect_confounding <- function(
+    n1,
+    n2,
+    sd_therapist,
+    sd_therapist_confounding,
+    sd_error,
+    ATE,
+    ...) {
+    tot_n <- 2 * n1 * n2
+    b_pre_prognosis <- solve_for_mean(
+        sd = sd_therapist_confounding, 
+        n2 = n2
+    )
+    Z <- rep(c(0, 1), each = n1 * n2)
+    therapist_cc <- 1:n2
+    therapist_tx <- (n2 + 1):(n2 * 2)
+    therapist_effect_cc <- rnorm(n2, 0, sd_therapist)
+    therapist_effect_tx <- rnorm(n2, 0, sd_therapist)
+    therapist_effects <- c(therapist_effect_cc, therapist_effect_tx)
+    error <- rnorm(tot_n, 0, sd_error)
+    d <- data.frame(
+        Z,
+        pre_prognosis = rbinom(tot_n, 1, 0.5),
+        therapist = NA,
+        therapist_random = NA
+    )
+    d$therapist <- ifelse(
+        Z == 0,
+        # control
+        ifelse(
+            d$pre_prognosis == 0,
+            sample(
+                x = 1:(n2 / 2),
+                size = n1 * n2 / 2,
+                replace = TRUE
+            ),
+            sample(
+                x = (n2 / 2 + 1):(n2),
+                size = n1 * n2 / 2,
+                replace = TRUE
+            )
+        ),
+        # treatment
+        ifelse(
+            d$pre_prognosis == 0,
+            sample(
+                x = 1:(n2 / 2),
+                size = n1 * n2 / 2,
+                replace = TRUE
+            ),
+            sample(
+                x = (n2 / 2 + 1):(n2),
+                size = n1 * n2 / 2,
+                replace = TRUE
+            )
+        ) + n2
+    )
+    d$therapist_random[d$Z == 0] <- sample(
+        x = therapist_cc,
+        size = n1 * n2,
+        replace = TRUE
+    )
+    d$therapist_random[d$Z == 1] <- sample(
+        x = therapist_tx,
+        size = n1 * n2,
+        replace = TRUE
+    )
+    # non-random allocation of therapists
+    d$therapist_effect <- therapist_effects[d$therapist]
+    d$y <- 10 + 
+        d$Z * ATE + 
+        d$therapist_effect + 
+        error + 
+        d$pre_prognosis * b_pre_prognosis
+    # random allocation of therapists
+    d$therapist_effect_random <- therapist_effects[d$therapist_random]
+    d$y_random <- 10 + 
+        d$Z * ATE + 
+        d$therapist_effect_random + 
+        error + 
+        d$pre_prognosis * b_pre_prognosis
+    # required by powerlmm
+    d$time <- 0
+    
+    d
+}
+```
+
+To run the simulation we pass the simulation function `simulate_therapist_effect_confounding` and use a custom `powerlmm` model to setup all the parameters.
+
+```{r, sim-params}
+#| code-fold: false
+ds <- study_design(custom = TRUE)
+ICC <- 0.05
+sd_error <- 1.5
+sd_therapist <- sqrt((ICC * sd_error^2) / (1 - ICC))
+sd_therapist^2 / (sd_therapist^2 + sd_error^2)
+
+p <- powerlmm:::study_parameters.plcp_design_custom(
+    design = ds,
+    n1 = 20,
+    n2 = 10,
+    sd_therapist = sd_therapist,
+    sd_error = sd_error,
+    ATE = 0,
+    data_gen = simulate_therapist_effect_confounding
+)
+p$sd_therapist_confounding <- get_therapist_sd_from_icc(
+    icc = 0.075, 
+    sd_error = p$sd_error
+)
+tot_sd <- sqrt(
+    p$sd_error^2 + p$sd_therapist^2 + p$sd_therapist_confounding^2
+)
+p$ATE <- 0.5 * tot_sd
+p$tot_n <- 2 * p$n1 * p$n2
+p$df <- 2 * p$n2 - 2
+```
+
+True parameter values
+
+```{r, sim-thetas}
+#| code-fold: false
+p$thetas_FE <- list(
+    "(Intercept)" = 10,
+    "Z" = p$ATE
+)
+p$thetas_RE <- list(
+    "therapist_(Intercept)" = p$sd_therapist^2,
+    "therapist_random_(Intercept)" = p$sd_therapist^2,
+    "error" = p$sd_error^2
+)
+```
+
+We then specify the statistical models
+
+```{r, sim-models}
+#| code-fold: false
+f0 <- sim_formula(
+    "y_random ~ Z + (1 | therapist_random)", 
+    test = "Z"
+)
+f1 <- sim_formula(
+    "y_random ~ Z + pre_prognosis + (1 | therapist_random)", 
+    test = "Z"
+)
+f2 <- sim_formula(
+    "y ~ Z + (1 | therapist)",
+    test = "Z"
+)
+f3 <- sim_formula(
+    "y ~ Z + pre_prognosis + (1 | therapist)", 
+    test = "Z"
+)
+f4 <- sim_formula(
+    "y ~ Z", 
+    test = "Z"
+)
+f5 <- sim_formula(
+    "y ~ Z + pre_prognosis", 
+    test = "Z"
+)
+f <- sim_formula_compare(
+    "rand" = f0,
+    "rand_adj" = f1,
+    "confounding" = f2,
+    "adjusted" = f3,
+    "ignored" = f4,
+    "ignored_adjusted" = f5
+)
+```
+
+Finally, we run the simulation and save the results.
+```{r, sim-run}
+#| code-fold: false
+# Load cache if it exists
+file_path <- "tmp/simulation.rds"
+if (file.exists(file_path)) {
+    res <- read_rds(file = file_path)
+} else {
+    MAX_CORES <- as.numeric(Sys.getenv("MAX_CORES"))
+    N_SIM <- as.numeric(Sys.getenv("N_SIM"))
+    if (is.na(MAX_CORES)) MAX_CORES <- parallel::detectCores(logical = FALSE) - 1
+    cl <- makeCluster(MAX_CORES)
+    clusterExport(
+        cl, 
+        c(
+            "solve_for_mean", 
+            "get_therapist_sd_from_icc"
+        )
+    )
+    res <- simulate(
+        p,
+        nsim = ifelse(is.na(N_SIM), 10000, N_SIM),
+        cores = MAX_CORES,
+        formula = f,
+        cl = cl,
+        satterthwaite = TRUE
+    )
+    stopCluster(cl)
+    write_rds(
+        res,
+        file = file_path,
+        compress = "gz"
+    )
+}
+```
+
+Number of simulations: `r res$nsim`
+
+### Simulations results
+We first summarize the treatment effects, and the result is shown in @tbl-sim-treatment-effects.
+```{r, tbl-sim-treatment-effects}
+#| tbl-cap: Simulation results (treatment effects)
+summary(
+    res,
+    verbose = FALSE,
+    para = "Z"
+)$summary$summary$FE %>%
+    mutate(
+        SD_rel_bias = (M_se - SD_est) / SD_est
+    ) %>%
+    relocate(model, .before = 1) %>% 
+    select(
+        -parameter, 
+        -Power, 
+        -Power_bw,
+        "Model" = model,
+        "Estimate" = M_est,
+        "Rel. bias (SE)" = SD_rel_bias,
+        "SD(Est.)" = SD_est,
+        "Power" = Power_satt,
+        "True" = theta
+    ) %>% 
+    kable(digits = 2)
+```
+
+A summary of the estimated ICCs is shown in @tbl-sim-icc.
+```{r, tbl-sim-icc}
+#| tbl-cap: Simulation results (ICCs)
+lapply(
+    seq_along(res$res), 
+    function(i) {
+        res$res[[i]]$RE %>% 
+            group_by(sim) %>% 
+            summarize(ICC = vcov[1] / sum(vcov)) %>% 
+            ungroup() %>% 
+            summarize(
+                est_mean = mean(ICC), 
+                est_sd = sd(ICC), 
+                est_lwr = quantile(ICC, 0.025), 
+                est_upr = quantile(ICC, 0.975)
+            ) %>% 
+            ungroup() %>% 
+            mutate(
+                model = names(res$res)[[i]],
+                parameter = "ICC",
+                .before = 1
+            )
+    }
+) %>% 
+    bind_rows() %>% 
+    filter(grepl("ignored", model) == FALSE) %>% 
+    mutate(
+        theta = p$sd_therapist^2 / (p$sd_therapist^2 + p$sd_error^2),
+        rel_bias = (est_mean - theta) / theta
+    ) %>% 
+    select(
+        "Model" = model,
+        "Parameter" = parameter,
+        "Estimate" = est_mean,
+        "Rel. bias" = rel_bias,
+        "SD(Est.)" = est_sd,
+        "Est. (2.5%)" = est_lwr,
+        "Est. (97.5%)" = est_upr,
+        "True" = theta
+    ) %>% 
+    kable(digits = 2)
+```
+
+Lastly, we summarize the variance components.
+```{r, tbl-sim-vc}
+#| tbl-cap: Simulation results (variance components)
+lapply(
+    seq_along(res$res), 
+    function(i) {
+        res$res[[i]]$RE %>%
+            group_by(parameter) %>%
+            summarize(
+                est_mean = mean(vcov),
+                est_sd = sd(vcov),
+                est_lwr = quantile(vcov, 0.025),
+                est_upr = quantile(vcov, 0.975)
+            ) %>%
+            ungroup() %>%
+            mutate(
+                model = names(res$res)[[i]],
+                .before = 1
+            )
+    }
+) %>%
+    bind_rows() %>%
+    left_join(
+        data.frame(
+            parameter = names(p$thetas_RE),
+            theta = unlist(p$thetas_RE)
+        )
+    ) %>%
+    mutate(
+        parameter = replace(
+            parameter, 
+            grep("therapist", parameter), 
+            "therapist"
+        ),
+        theta = case_when(
+            parameter == "therapist" ~ p$sd_therapist^2,
+            parameter == "error" & model == "rand" ~ p$sd_error^2 + 
+                p$sd_therapist_confounding^2,
+            model == "ignored" ~ p$sd_error^2 +  p$sd_therapist^2 + 
+                p$sd_therapist_confounding^2,
+            model == "ignored_adjusted" ~ p$sd_error^2 + p$sd_therapist^2,
+            parameter == "error" ~ p$sd_error^2
+        ),
+        rel_bias = (est_mean - theta) / theta
+    ) %>% 
+    select(
+        "Model" = model,
+        "Parameter" = parameter,
+        "Estimate" = est_mean,
+        "Rel. bias" = rel_bias,
+        "SD(Est.)" = est_sd,
+        "Est. (2.5%)" = est_lwr,
+        "Est. (97.5%)" = est_upr,
+        "True" = theta
+    ) %>% 
+    kable(digits = 2)
+```
+
+## A More Intuitive Interpretation of Therapist Effects
+This section presents R code for calculating the overlap measures presented in the manuscript.
+
+### Calculate the overlap between therapist distributions
+Overlap can be calculated using the examples presented below, and several equivalent parameterizations are shown, using both standardized and raw effect sizes.
+
+```{r}
+# Integration
+int_f <- function(x, mu1, mu2, sd1, sd2) {
+    f1 <- dnorm(x, mean = mu1, sd = sd1)
+    f2 <- dnorm(x, mean = mu2, sd = sd2)
+    pmin(f1, f2)
+}
+cohensd <- 0.2
+tot_sd <- sqrt(p$sd_therapist^2 + p$sd_error^2)
+ATE <- cohensd * tot_sd
+# standardize using therapist SD
+z <- ATE / p$sd_therapist
+2 * pnorm(-abs(z) / 2)
+# unstandardized
+2 * pnorm(
+    -abs(ATE) / 2, 
+    sd = p$sd_therapist
+)
+# Integrate unstandardized
+integrate(
+    int_f,
+    -Inf,
+    Inf,
+    mu1 = 0,
+    mu2 = ATE,
+    sd1 = p$sd_therapist,
+    sd2 = p$sd_therapist
+)
+# cohen's d
+2 * pnorm(
+    -abs(cohensd) / 2,
+    sd = p$sd_therapist / tot_sd
+)
+ICC <- p$sd_therapist^2 / (p$sd_therapist^2 + p$sd_error^2)
+2 * pnorm(
+    -abs(cohensd) / 2,
+    sd = sqrt(ICC)
+)
+```
+
+### Plot Overlap
+@fig-overlap visualizes the overlapping therapist effect distributions.
+```{r, fig-overlap}
+#| fig-cap: The proportion of therapists from each treatment group that have overlapping effects. 
+#| fig-height: 3
+SD <- sqrt(0.05)
+mean1 <- 0.2
+# create x axis
+x_min <- 0 - 3 * SD
+x_max <- mean1 + 3 * SD
+x <- seq(x_min, x_max, length.out = 2e4)
+df_control <- rbind(
+    data.frame("x" = x_min, "y" = 0),
+    data.frame("x" = x, "y" = dnorm(x, 0, SD)),
+    data.frame("x" = x_max, "y" = 0)
+)
+df_tx <- rbind(
+    data.frame("x" = x_min, "y" = 0),
+    data.frame("x" = x, "y" = dnorm(x, mean1, SD)),
+    data.frame("x" = x_max, "y" = 0)
+)
+poly_overlap <- data.frame(
+    "x" = df_control$x,
+    "y" = pmin(df_control$y, df_tx$y)
+)
+# colors
+overlap_fill <- "#2980b9"
+u3_fill <- "#3498db"
+control_fill <- "#7f8c8d"
+treatment_fill <- "#2c3e50"
+p0 <- ggplot(
+    df_tx,
+    aes(
+        x,
+        y,
+        fill = "treatment",
+    )
+) +
+    # fill treatment group
+    geom_polygon(
+        linewidth = 1,
+    ) +
+    # fill control group
+    geom_polygon(
+        data = df_control,
+        aes(
+            fill = "control"
+        ),
+        linewidth = 1
+    ) +
+    # overlap
+    geom_polygon(
+        data = poly_overlap,
+        color = NA,
+        fill = overlap_fill,
+    ) +
+    # line treatment
+    geom_polygon(
+        linewidth = 1,
+        color = "white",
+        alpha = 0.5,
+        fill = NA
+    ) +
+    # line control
+    geom_polygon(
+        data = df_control,
+        linewidth = 1,
+        color = "white",
+        alpha = 0.5,
+        fill = NA
+    ) +
+    geom_vline(
+        xintercept = 0,
+        linetype = "dotted"
+    ) +
+    geom_vline(
+        xintercept = mean1,
+        linetype = "dotted"
+    ) +
+    annotate(
+        geom = "text",
+        label = "Control",
+        x = 0,
+        y = dnorm(0, 0, SD) * 1.1
+    ) +
+    annotate(
+        geom = "text",
+        label = "Treatment",
+        x = mean1,
+        y = dnorm(mean1, mean1, SD) * 1.1
+    ) +
+    scale_color_manual(
+        values = c(
+            "control" = control_fill,
+            "treatment" = treatment_fill
+        )
+    ) +
+    scale_fill_manual(
+        values = c(
+            "control" = control_fill,
+            "treatment" = treatment_fill
+        )
+    ) +
+    labs(x = "Therapist effects", y = NULL) +
+    theme_minimal() +
+    theme(
+        legend.position = "none",
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank()
+    )
+p0
+ggsave("figures/fig_overlap.svg", width = 8, height = 3)
+```
+
+### Cohen's $U_3$
+Cohen's $U_3$ can be calculated using the examples below, and several equivalent parameterizations are shown, using both standardized and raw effect sizes.
+
+```{r}
+# standardize using therapist SD
+cohensd <- 0.2
+tot_sd <- sqrt(p$sd_therapist^2 + p$sd_error^2)
+ATE <- cohensd * tot_sd
+# standardize using therapist SD
+z <- ATE / p$sd_therapist
+pnorm(z)
+# unstandardized effect
+pnorm(ATE, sd = p$sd_therapist)
+# cohen's d parameterization
+pnorm(
+    cohensd,
+    sd = p$sd_therapist / tot_sd
+)
+
+ICC <- p$sd_therapist^2 / (p$sd_therapist^2 + p$sd_error^2)
+pnorm(
+    cohensd, 
+    sd = sqrt(ICC)
+)
+```
+
+### Plot Cohen's $U_3$
+@fig-u3 visualizes Cohen's $U_3$.
+
+```{r, fig-u3}
+#| fig-cap: A visualization of Cohen's U3, the proportion of the therapists in the treatment group with causal effects above the average therapist in the control group
+#| fig-height: 3
+SD <- sqrt(0.05)
+ES <- 0.2
+mean1 <- ES
+# create x axis
+x_min <- 0 - 3 * SD
+x_max <- mean1 + 3 * SD
+x <- seq(x_min, x_max, length.out = 2e4)
+df_control <- rbind(
+    data.frame("x" = x_min, "y" = 0),
+    data.frame("x" = x, "y" = dnorm(x, 0, SD)),
+    data.frame("x" = x_max, "y" = 0)
+)
+df_tx <- rbind(
+    data.frame("x" = x_min, "y" = 0),
+    data.frame("x" = x, "y" = dnorm(x, mean1, SD)),
+    data.frame("x" = x_max, "y" = 0)
+)
+poly_u3 <- rbind(
+    data.frame("x" = x_min, "y" = 0),
+    poly_overlap[poly_overlap$x <= 0, ],
+    data.frame("x" = 0, "y" = 0)
+)
+# colors
+overlap_fill <- "#2980b9"
+u3_fill <- "#3498db"
+control_fill <- "#7f8c8d"
+treatment_fill <- "#2c3e50"
+# plot
+p0 <- ggplot(
+    df_control,
+    aes(
+        x,
+        y,
+        fill = "control"
+    )
+) +
+    # fill control group
+    geom_polygon(
+        linewidth = 1,
+    ) +
+    # fill treatment group
+    geom_polygon(
+        data = df_tx,
+        aes(
+            fill = "treatment"
+        ),
+        linewidth = 1
+    ) +
+    # overlap
+    geom_polygon(
+        data = poly_u3,
+        color = NA,
+        fill = u3_fill
+    ) +
+    # line control
+    geom_polygon(
+        linewidth = 1,
+        color = "white",
+        alpha = 0.5,
+        fill = NA
+    ) +
+    # line treatment
+    geom_polygon(
+        data = df_tx,
+        linewidth = 1,
+        color = "white",
+        alpha = 0.5,
+        fill = NA
+    ) +
+    geom_vline(
+        xintercept = 0, 
+        linetype = "dotted"
+    ) +
+    geom_vline(
+        xintercept = mean1,
+        linetype = "dotted"
+    ) +
+    annotate(
+        geom = "text", 
+        label = "Control", 
+        x = 0, 
+        y = dnorm(0, 0, SD) * 1.1
+    ) +
+    annotate(
+        geom = "text", 
+        label = "Treatment", 
+        x = mean1, 
+        y = dnorm(mean1, mean1, SD) * 1.1
+    ) +
+    scale_color_manual(
+        values = c(
+            "control" = control_fill,
+            "treatment" = treatment_fill
+        )
+    ) +
+    scale_fill_manual(
+        values = c(
+            "control" = control_fill,
+            "treatment" = treatment_fill
+        )
+    ) +
+    labs(x = "Therapist effects", y = NULL) +
+    theme_minimal() +
+    theme(
+        legend.position = "none",
+        panel.grid.minor.y = element_blank(),
+        panel.grid.major.y = element_blank(),
+        axis.text.y = element_blank()
+    )
+p0
+ggsave("figures/fig_u3.svg", width = 8, height = 3)
+```
+
+### Probability of Superiority
+The probability of superiority can be calculated using the examples below, and several equivalent parameterizations are shown, using both standardized and raw effect sizes.
+
+```{r}
+cohensd <- 0.2
+tot_sd <- sqrt(p$sd_therapist^2 + p$sd_error^2)
+ATE <- cohensd * tot_sd
+z <- ATE / p$sd_therapist
+# standardize using therapist SD
+pnorm(z / sqrt(2))
+# raw ES
+pnorm(ATE / sqrt(2), sd = p$sd_therapist)
+# cohen's d
+ICC <- p$sd_therapist^2/(p$sd_therapist^2 + p$sd_error^2)
+pnorm(
+    cohensd / sqrt(2),
+    sd = p$sd_therapist / tot_sd
+)
+pnorm(
+    cohensd / sqrt(2),
+    sd = sqrt(ICC)
+)
+```
+
+### Table 
+@tbl-overlap-measures show the overlap measures for a range of treatment effects and ICCs. $\sigma_e^2$ is constant, so only the treatment and therapist effects are varied.
+
+```{r, tbl-overlap-measures}
+#| tbl-cap: Interpreting Therapist Effects Using Overlap Measures
+icc <- c(0.01, 0.05, 0.1, 0.2)
+d <- c(0.2, 0.5, 0.8)
+sigma_error2 <- 1
+sigma_u2 <- get_therapist_sd_from_icc(icc, sigma_error2)^2
+grid <- expand_grid(d, sigma_u2)
+grid <- grid %>%
+    mutate(
+        sigma_error2,
+        icc = sigma_u2 / (sigma_u2 + sigma_error2),
+        ate = d * sqrt((sigma_u2 + sigma_error2))
+    )
+map2_dfr(
+    grid$d,
+    grid$icc,
+    function(d, icc) {
+        data.frame(
+            d = d, 
+            icc = icc, 
+            overlap = 2 * pnorm(-abs(d) / 2, sd = sqrt(icc)),
+            u3 = pnorm(d, sd = sqrt(icc)),
+            prob_superiority = pnorm(d / sqrt(2), sd = sqrt(icc))
+        )
+        
+    }
+) %>% 
+mutate(
+    overlap = round(overlap * 100, 0),
+    u3 = round(u3 * 100, 0),
+    prob_superiority = round(prob_superiority, 2),
+) %>% 
+left_join(
+    select(grid, ate, d, icc, sigma_error2, sigma_u2),
+    by = c("d", "icc")
+) %>% 
+arrange(d, icc) %>% 
+rename(
+    "Overlap (%)" = overlap,
+    "$U_3$ (%)" = u3,
+    "Pr. superiority" = prob_superiority,
+    "Cohen's *d*" = d,
+    "ICC" = icc,
+    "ATE" = ate,
+    "$\\sigma_e^2$" = sigma_error2,
+    "$\\sigma_u^2$" = sigma_u2
+) %>% 
+kable(digits = 2)
+```
