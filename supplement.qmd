@@ -764,6 +764,11 @@ pnorm(
     cohensd / sqrt(2),
     sd = sqrt(ICC)
 )
+# using simulation
+n <- 1e5
+cc <- rnorm(n, 0, p$sd_therapist)
+tx <- rnorm(n, ATE, p$sd_therapist)
+mean(tx > cc)
 ```
 
 ### Table 
