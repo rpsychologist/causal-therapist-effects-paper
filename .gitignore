@@ -1,24 +1,19 @@
 *_files/
 *_cache/
-*.html
 .quarto
 /.quarto/
-
-## TeX
-*.aux
-*.synctex.gz
-*.fls
-*.fdb_latexmk
-*.log
-*.pdf
-
-
-## Temp
 tmp/
 dev/
 
-# Ignore during dev
-docs/
+# TeX
+figures/*.aux
+figures/*.synctex.gz
+figures/*.fls
+figures/*.fdb_latexmk
+figures/*.log
+figures/*.pdf
+figures/*.xdv
+# Figures
 figures/*.svg
 figures/*.png
 
