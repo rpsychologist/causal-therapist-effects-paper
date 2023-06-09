@@ -26,7 +26,7 @@ This online supplement for *A Causal Inference Perspective on Therapist Effects*
 
 - [Preprint](https://psyarxiv.com/f7mvz)
 - [GitHub repository](https://github.com/rpsychologist/causal-therapist-effects-paper/)
-- [OSF repository](https://osf.io/qfw23/)
+- [OSF repository](https://osf.io/kyxet/)
 - [Interactive visualization](https://rpsychologist.com/therapist-effects)
 
 ::: {.content-visible when-format="pdf"}

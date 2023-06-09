@@ -5,7 +5,7 @@ This repository contains the code required to reproduce all figures and simulati
 ## Materials
 - [Preprint](https://psyarxiv.com/f7mvz)
     - A publicly available version of the manuscript in advance of peer-review and formal publication
-- [OSF repository]()
+- [OSF repository](https://osf.io/kyxet/)
 - Online analysis supplement ([PDF](https://github.com/rpsychologist/causal-therapist-effects-paper/blob/main/docs/magnusson-2023-causal-therapist-effects.pdf), [HTML](https://rpsychologist.github.io/causal-therapist-effects-paper))
     - The rendered versions of `supplement.qmd`
 - [Interactive visualization](https://rpsychologist.com/therapist-effects)
