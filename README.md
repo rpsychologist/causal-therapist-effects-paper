@@ -3,7 +3,7 @@
 This repository contains the code required to reproduce all figures and simulations reported in the manuscript, *A Causal Inference Perspective on Therapist Effects* (Magnusson, *in preparation*). 
 
 ## Materials
-- [Preprint](h)
+- [Preprint](https://psyarxiv.com/f7mvz)
     - A publicly available version of the manuscript in advance of peer-review and formal publication
 - [OSF repository]()
 - Online analysis supplement ([PDF](https://github.com/rpsychologist/causal-therapist-effects-paper/blob/main/docs/magnusson-2023-causal-therapist-effects.pdf), [HTML](https://rpsychologist.github.io/causal-therapist-effects-paper))

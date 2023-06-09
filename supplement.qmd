@@ -24,7 +24,7 @@ format:
 ## Introduction
 This online supplement for *A Causal Inference Perspective on Therapist Effects* (Magnusson, 2023, in preparation) contains the code for all calculations, simulations, and figures presented in the article.
 
-- [Preprint]()
+- [Preprint](https://psyarxiv.com/f7mvz)
 - [GitHub repository](https://github.com/rpsychologist/causal-therapist-effects-paper/)
 - [OSF repository](https://osf.io/qfw23/)
 - [Interactive visualization](https://rpsychologist.com/therapist-effects)
