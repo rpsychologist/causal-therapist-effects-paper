@@ -52,6 +52,7 @@ docker run \
     -v "$(pwd)/docker/tmp:/home/tmp" \
     -e MAX_CORES=8 \
     -e N_SIM=10000 \
+    -e N_SIM_CI=1000 \
     causal-therapist-effects
 ```
 The variable `MAX_CORES` controls how many CPU cores the simulation will use, and `N_SIM` sets the number of simulations.

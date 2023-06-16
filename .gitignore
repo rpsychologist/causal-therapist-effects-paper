@@ -4,6 +4,7 @@
 /.quarto/
 tmp/
 dev/
+quarto.log
 
 # TeX
 figures/*.aux

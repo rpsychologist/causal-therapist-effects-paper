@@ -43,6 +43,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r, packages}
+#| cache: false
 library(ggplot2)
 library(readr)
 library(dplyr)
@@ -54,6 +55,8 @@ library(parallel)
 library(lme4)
 library(lmerTest)
 library(svglite)
+library(brms)
+library(parallel)
 ```
 
 ## Therapist-Outcome Confounding Simulation
@@ -822,4 +825,248 @@ rename(
     "$\\sigma_u^2$" = sigma_u2
 ) %>% 
 kable(digits = 2)
+```
+
+## Confidence Intervals
+We will compute confidence intervals for the therapist effects measures to draw inferences about the population values. The simplest way to construct CIs for the ICCs, and overlap measures is to use parametric bootstrapping or a Bayesian model. I will provide an example using Bayesian methods, but a parametric bootstrap using `lme4::bootMer` would look very similar. 
+
+For this example, I will increase the sample size to 40 therapists per treatment group. Robust inference regarding therapist effects will require large sample sizes.
+
+```{r}
+p$sd_therapist_confounding <- 0
+tot_sd <- sqrt(
+    p$sd_error^2 + p$sd_therapist^2
+)
+p$ATE <- 0.2 * tot_sd
+p$n2 <- 40
+file_path <- "tmp/ci_dataset.rds"
+if (file.exists(file_path)) {
+    d <- read_rds(file = file_path)
+} else {
+    d <- simulate_data(p)
+    write_rds(
+        d,
+        file = file_path,
+        compress = "gz"
+    )
+}
+```
+
+The Bayesian multilevel model is fit using `brms`.
+```{r, ci-bayes}
+#| message: false
+fit_tmp <- brm(
+    y_random ~ Z + (1 | therapist_random), 
+    data = d,
+    file = "tmp/fit_brms"
+)
+fit_tmp
+```
+
+We then calculate all effect sizes and construct confidence intervals using the 2.5th and 97.5th percentiles of the posterior distributions, as shown in @tbl-bayes-ci.
+
+```{r}
+#' Calculate various posterior therapist effects measures
+#' 
+#' @param the fitted brms model
+calc_overlap_bayes <- function(fit) {
+    draws <- as_draws_df(fit)[, 1:4]
+    draws %>%
+        mutate(
+            sd_u = sd_therapist_random__Intercept,
+            z = b_Z / sd_u,
+            overlap = 2 * pnorm(-abs(z) / 2),
+            u3 = pnorm(z),
+            PS = pnorm(z / sqrt(2)),
+            sd_e = sigma,
+            icc = sd_u^2 / (sd_u^2 + sd_e^2)
+        ) %>%
+        select(
+            tx = b_Z,
+            sdu = sd_u,
+            overlap,
+            u3,
+            PS,
+            sde = sd_e,
+            icc
+        ) %>%
+        summarize_all(
+            list(
+                "mean" = mean,
+                "median" = median,
+                "lwr" = ~ quantile(.x, 0.025),
+                "upr" = ~ quantile(.x, 0.975)
+            )
+        ) %>%
+        pivot_longer(
+            everything(),
+            names_to = c(".param", ".value"),
+            names_pattern = "(.*)_(.*)"
+        ) 
+}
+```
+
+```{r, tbl-bayes-ci}
+#| tbl-cap: 95% Confidence Intervals
+calc_overlap_bayes(fit_tmp) %>% 
+    rename(parameter = .param) %>% 
+    mutate(
+        parameter = case_when(
+            parameter == "PS" ~ "Prob. superiority",
+            parameter == "icc" ~ "ICC",
+            parameter == "overlap" ~ "Overlap",
+            parameter == "sde" ~ "Error SD, $\\sigma_e$",
+            parameter == "sdu" ~ "Therapist SD, $\\sigma_u$",
+            parameter == "tx" ~ "Treatment effect, $\\delta_1$",
+            parameter == "u3" ~ "Cohen's *U*<sub>3</sub>",
+            TRUE ~ parameter
+        ),
+        ci = paste0("[", round(lwr, 2), ", ", round(upr, 2), "]")
+    ) %>% 
+    select(
+        "Parameter" = parameter,
+        "Est. (mean)" = mean,
+        "Est. (median)" = median,
+        "95% CI" = ci
+    ) %>% 
+    kable(digits = 2)
+```
+
+### Simulation - Check Coverage
+We will run a small simulation to check the frequentist coverage of the computed confidence intervals, i.e., do they include the true value 95% of the time?
+```{r, ci-sim-bayes}
+#' Perform one confidence interval simulation
+#' 
+#' @param i an integer representing the current simulation index
+#' @p a powerlmm study parameter object
+#' @fit_tmp a brmsfit object
+bayes_sim <- function(i, p, fit_tmp) {
+    fit_b <- update(fit_tmp, newdata = simulate_data(p))
+    fit_b %>% 
+        calc_overlap_bayes() %>%
+        mutate(sim = i)
+}
+# check for cached simulation
+file_path <- "tmp/simulation_overlap_bayes.rds"
+if (file.exists(file_path)) {
+    res_b <- read_rds(file = file_path)
+} else {
+    MAX_CORES <- as.numeric(Sys.getenv("MAX_CORES"))
+    N_SIM <- as.numeric(Sys.getenv("N_SIM_CI"))
+    cl <- parallel::makeCluster(MAX_CORES)
+    parallel::clusterEvalQ(
+        cl,
+        expr = {
+            library(powerlmm)
+            library(brms)
+            library(dplyr)
+            library(tidyr)
+        }
+    )
+    clusterExport(
+        cl,
+        c(
+            "solve_for_mean",
+            "get_therapist_sd_from_icc",
+            "calc_overlap_bayes"
+        )
+    )
+    res_b <- parallel::parLapply(
+        cl,
+        seq_len(ifelse(is.na(N_SIM), 1000, N_SIM)),
+        bayes_sim,
+        p = p,
+        fit_tmp = fit_tmp
+    )
+    stopCluster(cl)
+    res_b <- res_b %>% do.call(rbind, .)
+    write_rds(
+        res_b,
+        file = file_path,
+        compress = "gz"
+    )
+}
+```
+
+@tbl-ci-sim summarizes the results from the `r filter(res_b, .param == "tx") %>% nrow` simulations. Posterior means are used as estimates; relative bias is slightly lower for posterior medians.
+
+```{r, tbl-ci-sim}
+#| tbl-cap: Simulation Results for the 95% CIs
+res_b %>%
+    rename(parameter = .param) %>%
+    mutate(
+        theta = case_when(
+            parameter == "tx" ~ p$ATE,
+            parameter == "sdu" ~ p$sd_therapist,
+            parameter == "sde" ~ p$sd_error,
+            parameter == "icc" ~ p$sd_therapist^2 / (p$sd_therapist^2 + p$sd_error^2),
+            parameter == "overlap" ~ 2 * pnorm(-abs(p$ATE / p$sd_therapist) / 2),
+            parameter == "u3" ~ pnorm(p$ATE / p$sd_therapist),
+            parameter == "PS" ~ pnorm((p$ATE / p$sd_therapist) / sqrt(2)),
+        ),
+        coverage = lwr < theta & upr > theta
+    ) %>%
+    group_by(parameter) %>%
+    summarize(
+        M_est = mean(mean),
+        Med_est = mean(median),
+        sd_mean = sd(mean), 
+        coverage = mean(coverage),
+        theta = unique(theta),
+        lwr = quantile(mean, 0.025),
+        upr = quantile(mean, 0.975)
+    ) %>%
+    mutate(
+        parameter = case_when(
+            parameter == "PS" ~ "Prob. superiority",
+            parameter == "icc" ~ "ICC",
+            parameter == "overlap" ~ "Overlap",
+            parameter == "sde" ~ "Error SD, $\\sigma_e$",
+            parameter == "sdu" ~ "Therapist SD, $\\sigma_u$",
+            parameter == "tx" ~ "Treatment effect, $\\delta_1$",
+            parameter == "u3" ~ "Cohen's *U*<sub>3</sub>",
+            TRUE ~ parameter
+        ),
+        rel_bias = (M_est - theta) / theta,
+        rel_bias_med = (Med_est - theta) / theta
+    ) %>% 
+    select(
+        Parameter = parameter,
+        "Estimate" = M_est,
+        "SD(Est.)" = sd_mean,
+        "Coverage" = coverage,
+        "True" = theta, 
+        "2.5th" = lwr,
+        "97.5th" = upr,
+        "Rel. bias (Est.)" = rel_bias,
+    ) %>% 
+    kable(digits = 2)
+
+```
+
+@tbl-ci-sim-power shows the power for the treatment effect and the probability of superiority.
+
+```{r, tbl-ci-sim-power}
+#| tbl-cap: Simulation-based Power
+res_b %>% 
+    filter(.param == "tx") %>% 
+    group_by(.param) %>% 
+    summarize(power = 1 - mean(lwr <= 0 & upr >= 0)) %>% 
+    rbind(
+    res_b %>% 
+        filter(.param == "PS") %>% 
+        group_by(.param) %>% 
+        summarise(power = 1 - mean(lwr <= 0.5 & upr >= 0.5))
+    ) %>% 
+    mutate(
+        .param = case_when(
+            .param  == "PS" ~ "Prob. superiority",
+            .param  == "tx" ~ "Treatment effect, $\\delta_1$"
+        )
+    ) %>% 
+    rename(
+        "Parameter" = .param,
+        "Power" = power
+    ) %>% 
+    kable(digits = 2)
 ```
