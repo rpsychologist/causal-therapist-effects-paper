@@ -17,6 +17,7 @@ figures/*.xdv
 # Figures
 figures/*.svg
 figures/*.png
+figures/*.drawio
 
 # R Environment Variables
 .Renviron
