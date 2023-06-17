@@ -55,6 +55,13 @@ docker run \
     -e N_SIM_CI=1000 \
     causal-therapist-effects
 ```
-The variable `MAX_CORES` controls how many CPU cores the simulation will use, and `N_SIM` sets the number of simulations.
+The variable `MAX_CORES` controls how many CPU cores the simulation will use, `N_SIM` sets the number of simulations for the confounding example, and `N_SIM_CI` controls the confidence interval simulation.
 
 Remove `./docker/tmp/simulation.rds` to rerun the simulation.
+
+## Blinded output
+The "blinded" profile can be used for masked peer review. Masked documents will be saved to `./docs-blinded`
+
+```bash
+quarto render --profile blinded
+```

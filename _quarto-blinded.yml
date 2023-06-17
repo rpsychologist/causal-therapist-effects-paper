@@ -1,0 +1,11 @@
+project:
+  render: 
+    - supplement.qmd
+  type: website
+  output-dir: docs-blinded
+
+format:
+    pdf: 
+        output-file: magnusson-2023-causal-therapist-effects-blinded.pdf
+code-tools: false
+filters: [blinded.lua]

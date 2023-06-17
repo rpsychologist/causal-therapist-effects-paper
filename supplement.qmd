@@ -1,29 +1,22 @@
 ---
 title: "A Causal Inference Perspective on Therapist Effects---Online Supplement"
-author: 
-  - name: Kristoffer Magnusson
-    orcid: 0000-0003-0713-0556
-    email: kristoffer.magnusson@ki.se
-    url: https://rpsychologist.com
-    affiliations:
-      - name: Centre for Psychiatry Research, Department of Clinical Neuroscience, Karolinska Institutet, & Stockholm Health Care Services, Region Stockholm
 date: now
 toc: true
 toc-depth: 2
 code-fold: false
-code-tools: 
-    source: https://github.com/rpsychologist/causal-therapist-effects-paper/blob/main/supplement.qmd
 html-math-method: katex
-format:
-    html: 
-        output-file: index.html
-    pdf: 
-        output-file: magnusson-2023-causal-therapist-effects.pdf
 ---
 
-## Introduction
-This online supplement for *A Causal Inference Perspective on Therapist Effects* (Magnusson, 2023, in preparation) contains the code for all calculations, simulations, and figures presented in the article.
+::: {.content-visible when-profile="blinded"}
+:::{.callout-important}
+This document is the blinded version intended for peer review.
+:::
+:::
 
+## Introduction
+This online supplement for *A Causal Inference Perspective on Therapist Effects* (`r ifelse(Sys.getenv("QUARTO_PROFILE") == "blinded", "*Masked*", "Magnusson")`, 2023, in preparation) contains the code for all calculations, simulations, and figures presented in the article.
+
+:::{.content-hidden when-profile="blinded"}
 - [Preprint](https://psyarxiv.com/f7mvz)
 - [GitHub repository](https://github.com/rpsychologist/causal-therapist-effects-paper/)
 - [OSF repository](https://osf.io/kyxet/)
@@ -31,6 +24,11 @@ This online supplement for *A Causal Inference Perspective on Therapist Effects*
 
 ::: {.content-visible when-format="pdf"}
 An HTML version of this document can also be viewed at [https://rpsychologist.github.io/causal-therapist-effects-paper](https://rpsychologist.github.io/causal-therapist-effects-paper)
+:::
+:::
+
+::: {.content-visible when-profile="blinded"}
+*Links removed for masked review.*
 :::
 
 ```{r, setup}
@@ -60,7 +58,6 @@ library(parallel)
 ```
 
 ## Therapist-Outcome Confounding Simulation
-
 The functions below were used to simulate a data set with therapist effects and a therapist-outcome confounder.
 
 ```{r, sim-function}
