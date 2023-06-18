@@ -7,7 +7,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 <meta name="author" content="Kristoffer Magnusson">
-<meta name="dcterms.date" content="2023-06-16">
+<meta name="dcterms.date" content="2023-06-18">
 
 <title>A Causal Inference Perspective on Therapist Effects—Online Supplement</title>
 <style>
@@ -161,7 +161,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">June 16, 2023</p>
+      <p class="date">June 18, 2023</p>
     </div>
   </div>
   
@@ -206,7 +206,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="therapist-outcome-confounding-simulation" class="level2">
 <h2 class="anchored" data-anchor-id="therapist-outcome-confounding-simulation">Therapist-Outcome Confounding Simulation</h2>
 <p>The functions below were used to simulate a data set with therapist effects and a therapist-outcome confounder.</p>
-<div class="cell" data-hash="supplement_cache/html/sim-function_d4a48425fcf62b3570a1a8b45933e15e">
+<div class="cell" data-hash="supplement_cache/html/sim-function_7131fa3f4e790a66a35a4c2bde01aee4">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Get the mean difference between prognostic groups</span></span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param sd the SD added to the therapist level due to the confounder</span></span>
@@ -222,7 +222,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>    <span class="dv">2</span> <span class="sc">*</span> <span class="fu">sqrt</span>(sd<span class="sc">^</span><span class="dv">2</span> <span class="sc">*</span> (n2 <span class="sc">*</span> <span class="dv">2</span> <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> (n2 <span class="sc">*</span> <span class="dv">2</span>))</span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#' Get the therapist SD from thee ICC</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#' Get the therapist SD from the ICC</span></span>
 <span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
 <span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param icc the ICC</span></span>
 <span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param sd_error the error SD</span></span>
@@ -234,12 +234,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a><span class="co">#' Simulate confounded therapist effects </span></span>
 <span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param n1</span></span>
-<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param n2</span></span>
-<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param sd_therapist</span></span>
-<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param sd_therapist_confounding</span></span>
-<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param sd_error</span></span>
-<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param ATE</span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param n1 the number of patients per therapist</span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param n2 the number of therapists per treatment group</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param sd_therapist the random therapist SD</span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param sd_therapist_confounding the SD added to sd_therapist due to confounding</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param sd_error the random error SD</span></span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param ATE average treatment effect</span></span>
 <span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
 <span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a><span class="co">#' @returns a data.frame</span></span>
 <span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>simulate_therapist_effect_confounding <span class="ot">&lt;-</span> <span class="cf">function</span>(</span>
@@ -329,13 +329,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-120"><a href="#cb3-120" aria-hidden="true" tabindex="-1"></a>    d</span>
 <span id="cb3-121"><a href="#cb3-121" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>To run the simulation we pass the simulation function <code>simulate_therapist_effect_confounding</code> and use a custom <code>powerlmm</code> model to setup all the parameters.</p>
-<div class="cell" data-hash="supplement_cache/html/sim-params_de4c338ae5ab0c1234ac3ae4ccfb9cec">
+<p>To run the simulation, we pass the simulation function <code>simulate_therapist_effect_confounding</code> and use a custom <code>powerlmm</code> model to set up all the parameters.</p>
+<div class="cell" data-hash="supplement_cache/html/sim-params_8164632361a130aefd3ab011bcb21db5">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ds <span class="ot">&lt;-</span> <span class="fu">study_design</span>(<span class="at">custom =</span> <span class="cn">TRUE</span>)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ICC <span class="ot">&lt;-</span> <span class="fl">0.05</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>sd_error <span class="ot">&lt;-</span> <span class="fl">1.5</span></span>
 <span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>sd_therapist <span class="ot">&lt;-</span> <span class="fu">sqrt</span>((ICC <span class="sc">*</span> sd_error<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="dv">1</span> <span class="sc">-</span> ICC))</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> sd_error<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># check ICC</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> sd_error<span class="sc">^</span><span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 0.05</code></pre>
 </div>
@@ -352,12 +353,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">icc =</span> <span class="fl">0.075</span>, </span>
 <span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd_error =</span> p<span class="sc">$</span>sd_error</span>
 <span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>tot_sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(</span>
-<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    p<span class="sc">$</span>sd_error<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> p<span class="sc">$</span>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> p<span class="sc">$</span>sd_therapist_confounding<span class="sc">^</span><span class="dv">2</span></span>
-<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>ATE <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> tot_sd</span>
-<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>tot_n <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> p<span class="sc">$</span>n1 <span class="sc">*</span> p<span class="sc">$</span>n2</span>
-<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>df <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> p<span class="sc">$</span>n2 <span class="sc">-</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a><span class="co"># sd within groups</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>tot_sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>    p<span class="sc">$</span>sd_error<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> p<span class="sc">$</span>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> p<span class="sc">$</span>sd_therapist_confounding<span class="sc">^</span><span class="dv">2</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Cohen's d = 0.5</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>ATE <span class="ot">&lt;-</span> <span class="fl">0.5</span> <span class="sc">*</span> tot_sd</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>tot_n <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> p<span class="sc">$</span>n1 <span class="sc">*</span> p<span class="sc">$</span>n2</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>df <span class="ot">&lt;-</span> <span class="dv">2</span> <span class="sc">*</span> p<span class="sc">$</span>n2 <span class="sc">-</span> <span class="dv">2</span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>True parameter values</p>
 <div class="cell" data-hash="supplement_cache/html/sim-thetas_3d77f618a654ab39a7152a4f33eb1dd0">
@@ -371,7 +374,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">"error"</span> <span class="ot">=</span> p<span class="sc">$</span>sd_error<span class="sc">^</span><span class="dv">2</span></span>
 <span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>We then specify the statistical models</p>
+<p>We then specify the statistical models.</p>
 <div class="cell" data-hash="supplement_cache/html/sim-models_0ed2efe16722c2a9747bf11d3a957f3b">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>f0 <span class="ot">&lt;-</span> <span class="fu">sim_formula</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"y_random ~ Z + (1 | therapist_random)"</span>, </span>
@@ -865,7 +868,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="calculate-the-overlap-between-therapist-distributions" class="level3">
 <h3 class="anchored" data-anchor-id="calculate-the-overlap-between-therapist-distributions">Calculate the overlap between therapist distributions</h3>
 <p>Overlap can be calculated using the examples presented below, and several equivalent parameterizations are shown, using both standardized and raw effect sizes.</p>
-<div class="cell" data-hash="supplement_cache/html/unnamed-chunk-1_9d0d4d938c01cdd151fb6196790dbff0">
+<div class="cell" data-hash="supplement_cache/html/unnamed-chunk-2_3f3ee529c0742fe0db2c5c8b127015d0">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Integration</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>int_f <span class="ot">&lt;-</span> <span class="cf">function</span>(x, mu1, mu2, sd1, sd2) {</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    f1 <span class="ot">&lt;-</span> <span class="fu">dnorm</span>(x, <span class="at">mean =</span> mu1, <span class="at">sd =</span> sd1)</span>
@@ -923,7 +926,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="plot-overlap" class="level3">
 <h3 class="anchored" data-anchor-id="plot-overlap">Plot Overlap</h3>
 <p><a href="#fig-overlap">Figure&nbsp;1</a> visualizes the overlapping therapist effect distributions.</p>
-<div class="cell" data-hash="supplement_cache/html/fig-overlap_b1b08d4ea7d4972924b0bf54b0eac2fc">
+<div class="cell" data-hash="supplement_cache/html/fig-overlap_b59680a675b512b2212232bed7e24770">
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>SD <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fl">0.05</span>)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>mean1 <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
 <span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a><span class="co"># create x axis</span></span>
@@ -1036,7 +1039,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="fig-overlap" class="quarto-figure quarto-figure-center anchored">
 <figure class="figure">
 <p><img src="supplement_files/figure-html/fig-overlap-1.png" class="img-fluid figure-img" width="672"></p>
-<figcaption class="figure-caption">Figure&nbsp;1: The proportion of therapists from each treatment group that have overlapping effects.</figcaption>
+<figcaption class="figure-caption">Figure&nbsp;1: The proportion of therapists from each treatment group with overlapping effects.</figcaption>
 </figure>
 </div>
 </div>
@@ -1045,7 +1048,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="cohens-u_3" class="level3">
 <h3 class="anchored" data-anchor-id="cohens-u_3">Cohen’s <span class="math inline">U_3</span></h3>
 <p>Cohen’s <span class="math inline">U_3</span> can be calculated using the examples below, and several equivalent parameterizations are shown, using both standardized and raw effect sizes.</p>
-<div class="cell" data-hash="supplement_cache/html/unnamed-chunk-2_a353f4a6f1c005b7558469055c100d75">
+<div class="cell" data-hash="supplement_cache/html/unnamed-chunk-3_7a7b78092eb1f41afe5f4d27f6d52c39">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="co"># standardize using therapist SD</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>cohensd <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>tot_sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p<span class="sc">$</span>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> p<span class="sc">$</span>sd_error<span class="sc">^</span><span class="dv">2</span>)</span>
@@ -1082,7 +1085,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="plot-cohens-u_3" class="level3">
 <h3 class="anchored" data-anchor-id="plot-cohens-u_3">Plot Cohen’s <span class="math inline">U_3</span></h3>
 <p><a href="#fig-u3">Figure&nbsp;2</a> visualizes Cohen’s <span class="math inline">U_3</span>.</p>
-<div class="cell" data-hash="supplement_cache/html/fig-u3_ac5e4cd06d8f054d3233b1df742b6619">
+<div class="cell" data-hash="supplement_cache/html/fig-u3_d8cf9d3541093f1156a2524d9c5c8325">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>SD <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(<span class="fl">0.05</span>)</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>ES <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
 <span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>mean1 <span class="ot">&lt;-</span> ES</span>
@@ -1107,9 +1110,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb32-22"><a href="#cb32-22" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb32-23"><a href="#cb32-23" aria-hidden="true" tabindex="-1"></a><span class="co"># colors</span></span>
 <span id="cb32-24"><a href="#cb32-24" aria-hidden="true" tabindex="-1"></a>overlap_fill <span class="ot">&lt;-</span> <span class="st">"#2980b9"</span></span>
-<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>u3_fill <span class="ot">&lt;-</span> <span class="st">"#3498db"</span></span>
+<span id="cb32-25"><a href="#cb32-25" aria-hidden="true" tabindex="-1"></a>treatment_fill <span class="ot">&lt;-</span> <span class="st">"#3498db"</span></span>
 <span id="cb32-26"><a href="#cb32-26" aria-hidden="true" tabindex="-1"></a>control_fill <span class="ot">&lt;-</span> <span class="st">"#7f8c8d"</span></span>
-<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>treatment_fill <span class="ot">&lt;-</span> <span class="st">"#2c3e50"</span></span>
+<span id="cb32-27"><a href="#cb32-27" aria-hidden="true" tabindex="-1"></a>u3_fill <span class="ot">&lt;-</span> <span class="st">"#2c3e50"</span></span>
 <span id="cb32-28"><a href="#cb32-28" aria-hidden="true" tabindex="-1"></a><span class="co"># plot</span></span>
 <span id="cb32-29"><a href="#cb32-29" aria-hidden="true" tabindex="-1"></a>p0 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
 <span id="cb32-30"><a href="#cb32-30" aria-hidden="true" tabindex="-1"></a>    df_control,</span>
@@ -1207,7 +1210,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="probability-of-superiority" class="level3">
 <h3 class="anchored" data-anchor-id="probability-of-superiority">Probability of Superiority</h3>
 <p>The probability of superiority can be calculated using the examples below, and several equivalent parameterizations are shown, using both standardized and raw effect sizes.</p>
-<div class="cell" data-hash="supplement_cache/html/unnamed-chunk-3_7e35e87ed788011b9c12f7cb6ddf3e36">
+<div class="cell" data-hash="supplement_cache/html/unnamed-chunk-4_9f60403ea9e4a2992fbf1ee1dc435d95">
 <div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>cohensd <span class="ot">&lt;-</span> <span class="fl">0.2</span></span>
 <span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>tot_sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(p<span class="sc">$</span>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> p<span class="sc">$</span>sd_error<span class="sc">^</span><span class="dv">2</span>)</span>
 <span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>ATE <span class="ot">&lt;-</span> cohensd <span class="sc">*</span> tot_sd</span>
@@ -1244,7 +1247,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>tx <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(n, ATE, p<span class="sc">$</span>sd_therapist)</span>
 <span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(tx <span class="sc">&gt;</span> cc)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1] 0.73704</code></pre>
+<pre><code>[1] 0.73701</code></pre>
 </div>
 </div>
 </section>
@@ -1454,9 +1457,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="confidence-intervals" class="level2">
 <h2 class="anchored" data-anchor-id="confidence-intervals">Confidence Intervals</h2>
-<p>To draw inferences about the population values we will compute confidence intervals for the therapist effects measures. This simplest way to construct CIs for the ICCs, and overlap measures is to use parametric bootstrapping or a Bayesian model. Here I will provide an example using Bayesian methods, but a parametric bootstrap using <code>lme4::bootMer</code> would look very similar.</p>
-<p>For this example, I will increase the sample size to 40 therapists per treatment group. Robust inference regarding therapists effects will require large sample sizes.</p>
-<div class="cell" data-hash="supplement_cache/html/unnamed-chunk-4_89dc15c00962caddacba4dc678e1ad5b">
+<p>We will compute confidence intervals for the therapist effects measures to draw inferences about the population values. The simplest way to construct CIs for the ICCs, and overlap measures is to use parametric bootstrapping or a Bayesian model. I will provide an example using Bayesian methods, but a parametric bootstrap using <code>lme4::bootMer</code> would look very similar.</p>
+<p>For this example, I will increase the sample size to 40 therapists per treatment group. Robust inference regarding therapist effects will require large sample sizes. Moreover, this is the required sample size to reach 80% power for <em>d</em> = 0.2.</p>
+<div class="cell" data-hash="supplement_cache/html/unnamed-chunk-5_90678b75336dae94e7824b5f6719ef22">
 <div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a>p<span class="sc">$</span>sd_therapist_confounding <span class="ot">&lt;-</span> <span class="dv">0</span></span>
 <span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>tot_sd <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(</span>
 <span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>    p<span class="sc">$</span>sd_error<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> p<span class="sc">$</span>sd_therapist<span class="sc">^</span><span class="dv">2</span></span>
@@ -1476,84 +1479,116 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb44-17"><a href="#cb44-17" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>The Bayesian multilevel model is fit using <code>brms</code>.</p>
-<div class="cell" data-messages="false" data-hash="supplement_cache/html/ci-bayes_78c0f8987e83a363d59289ee899678f1">
+<div class="cell" data-hash="supplement_cache/html/ci-brms-fit_eb15ce784b7b61db2630e82702d14480">
 <div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>fit_tmp <span class="ot">&lt;-</span> <span class="fu">brm</span>(</span>
 <span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>    y_random <span class="sc">~</span> Z <span class="sc">+</span> (<span class="dv">1</span> <span class="sc">|</span> therapist_random), </span>
 <span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> d,</span>
-<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">file =</span> <span class="st">"tmp/fit_brms"</span></span>
-<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>)</span>
-<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a><span class="co">#' Calculate various posterior therapist effects measures</span></span>
-<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb45-8"><a href="#cb45-8" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param the fitted brms model</span></span>
-<span id="cb45-9"><a href="#cb45-9" aria-hidden="true" tabindex="-1"></a>calc_overlap_bayes <span class="ot">&lt;-</span> <span class="cf">function</span>(fit) {</span>
-<span id="cb45-10"><a href="#cb45-10" aria-hidden="true" tabindex="-1"></a>    draws <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(fit)[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span>
-<span id="cb45-11"><a href="#cb45-11" aria-hidden="true" tabindex="-1"></a>    draws <span class="sc">%&gt;%</span></span>
-<span id="cb45-12"><a href="#cb45-12" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(</span>
-<span id="cb45-13"><a href="#cb45-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_u =</span> sd_therapist_random__Intercept,</span>
-<span id="cb45-14"><a href="#cb45-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">z =</span> b_Z <span class="sc">/</span> sd_u,</span>
-<span id="cb45-15"><a href="#cb45-15" aria-hidden="true" tabindex="-1"></a>            <span class="at">overlap =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="fu">abs</span>(z) <span class="sc">/</span> <span class="dv">2</span>),</span>
-<span id="cb45-16"><a href="#cb45-16" aria-hidden="true" tabindex="-1"></a>            <span class="at">u3 =</span> <span class="fu">pnorm</span>(z),</span>
-<span id="cb45-17"><a href="#cb45-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">PS =</span> <span class="fu">pnorm</span>(z <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)),</span>
-<span id="cb45-18"><a href="#cb45-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_e =</span> sigma,</span>
-<span id="cb45-19"><a href="#cb45-19" aria-hidden="true" tabindex="-1"></a>            <span class="at">icc =</span> sd_u<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (sd_u<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> sd_e<span class="sc">^</span><span class="dv">2</span>)</span>
-<span id="cb45-20"><a href="#cb45-20" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
-<span id="cb45-21"><a href="#cb45-21" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(</span>
-<span id="cb45-22"><a href="#cb45-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">tx =</span> b_Z,</span>
-<span id="cb45-23"><a href="#cb45-23" aria-hidden="true" tabindex="-1"></a>            <span class="at">sdu =</span> sd_u,</span>
-<span id="cb45-24"><a href="#cb45-24" aria-hidden="true" tabindex="-1"></a>            overlap,</span>
-<span id="cb45-25"><a href="#cb45-25" aria-hidden="true" tabindex="-1"></a>            u3,</span>
-<span id="cb45-26"><a href="#cb45-26" aria-hidden="true" tabindex="-1"></a>            PS,</span>
-<span id="cb45-27"><a href="#cb45-27" aria-hidden="true" tabindex="-1"></a>            <span class="at">sde =</span> sd_e,</span>
-<span id="cb45-28"><a href="#cb45-28" aria-hidden="true" tabindex="-1"></a>            icc</span>
-<span id="cb45-29"><a href="#cb45-29" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
-<span id="cb45-30"><a href="#cb45-30" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarize_all</span>(</span>
-<span id="cb45-31"><a href="#cb45-31" aria-hidden="true" tabindex="-1"></a>            <span class="fu">list</span>(</span>
-<span id="cb45-32"><a href="#cb45-32" aria-hidden="true" tabindex="-1"></a>                <span class="st">"mean"</span> <span class="ot">=</span> mean,</span>
-<span id="cb45-33"><a href="#cb45-33" aria-hidden="true" tabindex="-1"></a>                <span class="st">"median"</span> <span class="ot">=</span> median,</span>
-<span id="cb45-34"><a href="#cb45-34" aria-hidden="true" tabindex="-1"></a>                <span class="st">"lwr"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">quantile</span>(.x, <span class="fl">0.025</span>),</span>
-<span id="cb45-35"><a href="#cb45-35" aria-hidden="true" tabindex="-1"></a>                <span class="st">"upr"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">quantile</span>(.x, <span class="fl">0.975</span>)</span>
-<span id="cb45-36"><a href="#cb45-36" aria-hidden="true" tabindex="-1"></a>            )</span>
-<span id="cb45-37"><a href="#cb45-37" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
-<span id="cb45-38"><a href="#cb45-38" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pivot_longer</span>(</span>
-<span id="cb45-39"><a href="#cb45-39" aria-hidden="true" tabindex="-1"></a>            <span class="fu">everything</span>(),</span>
-<span id="cb45-40"><a href="#cb45-40" aria-hidden="true" tabindex="-1"></a>            <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".param"</span>, <span class="st">".value"</span>),</span>
-<span id="cb45-41"><a href="#cb45-41" aria-hidden="true" tabindex="-1"></a>            <span class="at">names_pattern =</span> <span class="st">"(.*)_(.*)"</span></span>
-<span id="cb45-42"><a href="#cb45-42" aria-hidden="true" tabindex="-1"></a>        ) </span>
-<span id="cb45-43"><a href="#cb45-43" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">file =</span> <span class="st">"tmp/fit_brms"</span>,</span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">refresh =</span> <span class="dv">0</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="supplement_cache/html/ci-brms-summary_29a715df093bd2b39d597b663dce98ec">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>fit_tmp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> Family: gaussian 
+  Links: mu = identity; sigma = identity 
+Formula: y_random ~ Z + (1 | therapist_random) 
+   Data: d (Number of observations: 1600) 
+  Draws: 4 chains, each with iter = 2000; warmup = 1000; thin = 1;
+         total post-warmup draws = 4000
+
+Group-Level Effects: 
+~therapist_random (Number of levels: 80) 
+              Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sd(Intercept)     0.42      0.06     0.32     0.54 1.00     1436     2334
+
+Population-Level Effects: 
+          Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+Intercept    10.05      0.09     9.88    10.22 1.00     2370     2611
+Z             0.38      0.12     0.13     0.62 1.00     2700     2869
+
+Family Specific Parameters: 
+      Estimate Est.Error l-95% CI u-95% CI Rhat Bulk_ESS Tail_ESS
+sigma     1.50      0.03     1.45     1.56 1.00     6942     3253
+
+Draws were sampled using sampling(NUTS). For each parameter, Bulk_ESS
+and Tail_ESS are effective sample size measures, and Rhat is the potential
+scale reduction factor on split chains (at convergence, Rhat = 1).</code></pre>
+</div>
 </div>
 <p>We then calculate all effect sizes and construct confidence intervals using the 2.5th and 97.5th percentiles of the posterior distributions, as shown in <a href="#tbl-bayes-ci">Table&nbsp;5</a>.</p>
-<div class="cell" data-hash="supplement_cache/html/tbl-bayes-ci_1d38a1e98f85ec37ad641a9f8e9f9377">
-<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="fu">calc_overlap_bayes</span>(fit_tmp) <span class="sc">%&gt;%</span> </span>
-<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">parameter =</span> .param) <span class="sc">%&gt;%</span> </span>
-<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">parameter =</span> <span class="fu">case_when</span>(</span>
-<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"PS"</span> <span class="sc">~</span> <span class="st">"Prob. superiority"</span>,</span>
-<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"icc"</span> <span class="sc">~</span> <span class="st">"ICC"</span>,</span>
-<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"overlap"</span> <span class="sc">~</span> <span class="st">"Overlap"</span>,</span>
-<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sde"</span> <span class="sc">~</span> <span class="st">"Error SD, $</span><span class="sc">\\</span><span class="st">sigma_e$"</span>,</span>
-<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sdu"</span> <span class="sc">~</span> <span class="st">"Therapist SD, $</span><span class="sc">\\</span><span class="st">sigma_u$"</span>,</span>
-<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"tx"</span> <span class="sc">~</span> <span class="st">"Treatment effect $</span><span class="sc">\\</span><span class="st">delta_1$"</span>,</span>
-<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"u3"</span> <span class="sc">~</span> <span class="st">"Cohen's *U*&lt;sub&gt;3&lt;/sub&gt;"</span>,</span>
-<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> parameter</span>
-<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">ci =</span> <span class="fu">paste0</span>(<span class="st">"["</span>, <span class="fu">round</span>(lwr, <span class="dv">2</span>), <span class="st">", "</span>, <span class="fu">round</span>(upr, <span class="dv">2</span>), <span class="st">"]"</span>)</span>
-<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(</span>
-<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Parameter"</span> <span class="ot">=</span> parameter,</span>
-<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Est. (mean)"</span> <span class="ot">=</span> mean,</span>
-<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Est. (median)"</span> <span class="ot">=</span> median,</span>
-<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"95% CI"</span> <span class="ot">=</span> ci</span>
-<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="supplement_cache/html/unnamed-chunk-6_7c94c7e7f1636be2f5f7a19eb54a6b63">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Calculate various posterior therapist effects measures</span></span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param the fitted brms model</span></span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>calc_overlap_bayes <span class="ot">&lt;-</span> <span class="cf">function</span>(fit) {</span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>    draws <span class="ot">&lt;-</span> <span class="fu">as_draws_df</span>(fit)[, <span class="dv">1</span><span class="sc">:</span><span class="dv">4</span>]</span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>    draws <span class="sc">%&gt;%</span></span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(</span>
+<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_u =</span> sd_therapist_random__Intercept,</span>
+<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">z =</span> b_Z <span class="sc">/</span> sd_u,</span>
+<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">overlap =</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="fu">abs</span>(z) <span class="sc">/</span> <span class="dv">2</span>),</span>
+<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">u3 =</span> <span class="fu">pnorm</span>(z),</span>
+<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>            <span class="at">PS =</span> <span class="fu">pnorm</span>(z <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)),</span>
+<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd_e =</span> sigma,</span>
+<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>            <span class="at">icc =</span> sd_u<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (sd_u<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> sd_e<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
+<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>        <span class="fu">select</span>(</span>
+<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>            <span class="at">tx =</span> b_Z,</span>
+<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>            <span class="at">sdu =</span> sd_u,</span>
+<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>            overlap,</span>
+<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>            u3,</span>
+<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a>            PS,</span>
+<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>            <span class="at">sde =</span> sd_e,</span>
+<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>            icc</span>
+<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
+<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarize_all</span>(</span>
+<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">list</span>(</span>
+<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a>                <span class="st">"mean"</span> <span class="ot">=</span> mean,</span>
+<span id="cb48-28"><a href="#cb48-28" aria-hidden="true" tabindex="-1"></a>                <span class="st">"median"</span> <span class="ot">=</span> median,</span>
+<span id="cb48-29"><a href="#cb48-29" aria-hidden="true" tabindex="-1"></a>                <span class="st">"lwr"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">quantile</span>(.x, <span class="fl">0.025</span>),</span>
+<span id="cb48-30"><a href="#cb48-30" aria-hidden="true" tabindex="-1"></a>                <span class="st">"upr"</span> <span class="ot">=</span> <span class="er">~</span> <span class="fu">quantile</span>(.x, <span class="fl">0.975</span>)</span>
+<span id="cb48-31"><a href="#cb48-31" aria-hidden="true" tabindex="-1"></a>            )</span>
+<span id="cb48-32"><a href="#cb48-32" aria-hidden="true" tabindex="-1"></a>        ) <span class="sc">%&gt;%</span></span>
+<span id="cb48-33"><a href="#cb48-33" aria-hidden="true" tabindex="-1"></a>        <span class="fu">pivot_longer</span>(</span>
+<span id="cb48-34"><a href="#cb48-34" aria-hidden="true" tabindex="-1"></a>            <span class="fu">everything</span>(),</span>
+<span id="cb48-35"><a href="#cb48-35" aria-hidden="true" tabindex="-1"></a>            <span class="at">names_to =</span> <span class="fu">c</span>(<span class="st">".param"</span>, <span class="st">".value"</span>),</span>
+<span id="cb48-36"><a href="#cb48-36" aria-hidden="true" tabindex="-1"></a>            <span class="at">names_pattern =</span> <span class="st">"(.*)_(.*)"</span></span>
+<span id="cb48-37"><a href="#cb48-37" aria-hidden="true" tabindex="-1"></a>        ) </span>
+<span id="cb48-38"><a href="#cb48-38" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-hash="supplement_cache/html/tbl-bayes-ci_e36c1113a47d73b9ba6cae637895070f">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">calc_overlap_bayes</span>(fit_tmp) <span class="sc">%&gt;%</span> </span>
+<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">parameter =</span> .param) <span class="sc">%&gt;%</span> </span>
+<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">parameter =</span> <span class="fu">case_when</span>(</span>
+<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"PS"</span> <span class="sc">~</span> <span class="st">"Prob. superiority"</span>,</span>
+<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"icc"</span> <span class="sc">~</span> <span class="st">"ICC"</span>,</span>
+<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"overlap"</span> <span class="sc">~</span> <span class="st">"Overlap"</span>,</span>
+<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sde"</span> <span class="sc">~</span> <span class="st">"Error SD, $</span><span class="sc">\\</span><span class="st">sigma_e$"</span>,</span>
+<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sdu"</span> <span class="sc">~</span> <span class="st">"Therapist SD, $</span><span class="sc">\\</span><span class="st">sigma_u$"</span>,</span>
+<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"tx"</span> <span class="sc">~</span> <span class="st">"Treatment effect, $</span><span class="sc">\\</span><span class="st">delta_1$"</span>,</span>
+<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"u3"</span> <span class="sc">~</span> <span class="st">"Cohen's *U*&lt;sub&gt;3&lt;/sub&gt;"</span>,</span>
+<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> parameter</span>
+<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">ci =</span> <span class="fu">paste0</span>(<span class="st">"["</span>, <span class="fu">round</span>(lwr, <span class="dv">2</span>), <span class="st">", "</span>, <span class="fu">round</span>(upr, <span class="dv">2</span>), <span class="st">"]"</span>)</span>
+<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(</span>
+<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Parameter"</span> <span class="ot">=</span> parameter,</span>
+<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Est. (mean)"</span> <span class="ot">=</span> mean,</span>
+<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Est. (median)"</span> <span class="ot">=</span> median,</span>
+<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>        <span class="st">"95% CI"</span> <span class="ot">=</span> ci</span>
+<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb49-22"><a href="#cb49-22" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="tbl-bayes-ci" class="anchored">
 <table class="table table-sm table-striped small">
 <caption>Table&nbsp;5: 95% Confidence Intervals</caption>
 <colgroup>
-<col style="width: 41%">
+<col style="width: 42%">
 <col style="width: 17%">
 <col style="width: 20%">
-<col style="width: 20%">
+<col style="width: 19%">
 </colgroup>
 <thead>
 <tr class="header">
@@ -1565,46 +1600,46 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Treatment effect <span class="math inline">\delta_1</span></td>
-<td style="text-align: right;">0.06</td>
-<td style="text-align: right;">0.06</td>
-<td style="text-align: left;">[-0.19, 0.32]</td>
+<td style="text-align: left;">Treatment effect, <span class="math inline">\delta_1</span></td>
+<td style="text-align: right;">0.38</td>
+<td style="text-align: right;">0.39</td>
+<td style="text-align: left;">[0.13, 0.62]</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Therapist SD, <span class="math inline">\sigma_u</span></td>
-<td style="text-align: right;">0.19</td>
-<td style="text-align: right;">0.19</td>
-<td style="text-align: left;">[0.02, 0.38]</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: right;">0.42</td>
+<td style="text-align: left;">[0.32, 0.54]</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Overlap</td>
-<td style="text-align: right;">0.71</td>
-<td style="text-align: right;">0.79</td>
-<td style="text-align: left;">[0, 0.99]</td>
+<td style="text-align: right;">0.65</td>
+<td style="text-align: right;">0.65</td>
+<td style="text-align: left;">[0.44, 0.88]</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Cohen’s <em>U</em><sub>3</sub></td>
-<td style="text-align: right;">0.62</td>
-<td style="text-align: right;">0.64</td>
-<td style="text-align: left;">[0.08, 1]</td>
+<td style="text-align: right;">0.81</td>
+<td style="text-align: right;">0.82</td>
+<td style="text-align: left;">[0.62, 0.94]</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">Prob. superiority</td>
-<td style="text-align: right;">0.60</td>
-<td style="text-align: right;">0.60</td>
-<td style="text-align: left;">[0.16, 1]</td>
+<td style="text-align: right;">0.74</td>
+<td style="text-align: right;">0.74</td>
+<td style="text-align: left;">[0.59, 0.86]</td>
 </tr>
 <tr class="even">
 <td style="text-align: left;">Error SD, <span class="math inline">\sigma_e</span></td>
-<td style="text-align: right;">1.55</td>
-<td style="text-align: right;">1.55</td>
-<td style="text-align: left;">[1.48, 1.63]</td>
+<td style="text-align: right;">1.50</td>
+<td style="text-align: right;">1.50</td>
+<td style="text-align: left;">[1.45, 1.56]</td>
 </tr>
 <tr class="odd">
 <td style="text-align: left;">ICC</td>
-<td style="text-align: right;">0.02</td>
-<td style="text-align: right;">0.02</td>
-<td style="text-align: left;">[0, 0.06]</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: right;">0.07</td>
+<td style="text-align: left;">[0.04, 0.12]</td>
 </tr>
 </tbody>
 </table>
@@ -1615,118 +1650,118 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h3 class="anchored" data-anchor-id="simulation---check-coverage">Simulation - Check Coverage</h3>
 <p>We will run a small simulation to check the frequentist coverage of the computed confidence intervals, i.e., do they include the true value 95% of the time?</p>
 <div class="cell" data-hash="supplement_cache/html/ci-sim-bayes_fbcf944dcf5b22bdab2eb065b33d53db">
-<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Perform one confidence interval simulation</span></span>
-<span id="cb47-2"><a href="#cb47-2" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
-<span id="cb47-3"><a href="#cb47-3" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param i an integer representing the current simulation index</span></span>
-<span id="cb47-4"><a href="#cb47-4" aria-hidden="true" tabindex="-1"></a><span class="co">#' @p a powerlmm study parameter object</span></span>
-<span id="cb47-5"><a href="#cb47-5" aria-hidden="true" tabindex="-1"></a><span class="co">#' @fit_tmp a brmsfit object</span></span>
-<span id="cb47-6"><a href="#cb47-6" aria-hidden="true" tabindex="-1"></a>bayes_sim <span class="ot">&lt;-</span> <span class="cf">function</span>(i, p, fit_tmp) {</span>
-<span id="cb47-7"><a href="#cb47-7" aria-hidden="true" tabindex="-1"></a>    fit_b <span class="ot">&lt;-</span> <span class="fu">update</span>(fit_tmp, <span class="at">newdata =</span> <span class="fu">simulate_data</span>(p))</span>
-<span id="cb47-8"><a href="#cb47-8" aria-hidden="true" tabindex="-1"></a>    fit_b <span class="sc">%&gt;%</span> </span>
-<span id="cb47-9"><a href="#cb47-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">calc_overlap_bayes</span>() <span class="sc">%&gt;%</span></span>
-<span id="cb47-10"><a href="#cb47-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">sim =</span> i)</span>
-<span id="cb47-11"><a href="#cb47-11" aria-hidden="true" tabindex="-1"></a>}</span>
-<span id="cb47-12"><a href="#cb47-12" aria-hidden="true" tabindex="-1"></a><span class="co"># check for cached simulation</span></span>
-<span id="cb47-13"><a href="#cb47-13" aria-hidden="true" tabindex="-1"></a>file_path <span class="ot">&lt;-</span> <span class="st">"tmp/simulation_overlap_bayes.rds"</span></span>
-<span id="cb47-14"><a href="#cb47-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(file_path)) {</span>
-<span id="cb47-15"><a href="#cb47-15" aria-hidden="true" tabindex="-1"></a>    res_b <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="at">file =</span> file_path)</span>
-<span id="cb47-16"><a href="#cb47-16" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
-<span id="cb47-17"><a href="#cb47-17" aria-hidden="true" tabindex="-1"></a>    MAX_CORES <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">Sys.getenv</span>(<span class="st">"MAX_CORES"</span>))</span>
-<span id="cb47-18"><a href="#cb47-18" aria-hidden="true" tabindex="-1"></a>    N_SIM <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">Sys.getenv</span>(<span class="st">"N_SIM_CI"</span>))</span>
-<span id="cb47-19"><a href="#cb47-19" aria-hidden="true" tabindex="-1"></a>    cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(MAX_CORES)</span>
-<span id="cb47-20"><a href="#cb47-20" aria-hidden="true" tabindex="-1"></a>    parallel<span class="sc">::</span><span class="fu">clusterEvalQ</span>(</span>
-<span id="cb47-21"><a href="#cb47-21" aria-hidden="true" tabindex="-1"></a>        cl,</span>
-<span id="cb47-22"><a href="#cb47-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">expr =</span> {</span>
-<span id="cb47-23"><a href="#cb47-23" aria-hidden="true" tabindex="-1"></a>            <span class="fu">library</span>(powerlmm)</span>
-<span id="cb47-24"><a href="#cb47-24" aria-hidden="true" tabindex="-1"></a>            <span class="fu">library</span>(brms)</span>
-<span id="cb47-25"><a href="#cb47-25" aria-hidden="true" tabindex="-1"></a>            <span class="fu">library</span>(dplyr)</span>
-<span id="cb47-26"><a href="#cb47-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">library</span>(tidyr)</span>
-<span id="cb47-27"><a href="#cb47-27" aria-hidden="true" tabindex="-1"></a>        }</span>
-<span id="cb47-28"><a href="#cb47-28" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb47-29"><a href="#cb47-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">clusterExport</span>(</span>
-<span id="cb47-30"><a href="#cb47-30" aria-hidden="true" tabindex="-1"></a>        cl,</span>
-<span id="cb47-31"><a href="#cb47-31" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(</span>
-<span id="cb47-32"><a href="#cb47-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">"solve_for_mean"</span>,</span>
-<span id="cb47-33"><a href="#cb47-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">"get_therapist_sd_from_icc"</span>,</span>
-<span id="cb47-34"><a href="#cb47-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">"calc_overlap_bayes"</span></span>
-<span id="cb47-35"><a href="#cb47-35" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb47-36"><a href="#cb47-36" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb47-37"><a href="#cb47-37" aria-hidden="true" tabindex="-1"></a>    res_b <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">parLapply</span>(</span>
-<span id="cb47-38"><a href="#cb47-38" aria-hidden="true" tabindex="-1"></a>        cl,</span>
-<span id="cb47-39"><a href="#cb47-39" aria-hidden="true" tabindex="-1"></a>        <span class="fu">seq_len</span>(<span class="fu">ifelse</span>(<span class="fu">is.na</span>(N_SIM), <span class="dv">1000</span>, N_SIM)),</span>
-<span id="cb47-40"><a href="#cb47-40" aria-hidden="true" tabindex="-1"></a>        bayes_sim,</span>
-<span id="cb47-41"><a href="#cb47-41" aria-hidden="true" tabindex="-1"></a>        <span class="at">p =</span> p,</span>
-<span id="cb47-42"><a href="#cb47-42" aria-hidden="true" tabindex="-1"></a>        <span class="at">fit_tmp =</span> fit_tmp</span>
-<span id="cb47-43"><a href="#cb47-43" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb47-44"><a href="#cb47-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopCluster</span>(cl)</span>
-<span id="cb47-45"><a href="#cb47-45" aria-hidden="true" tabindex="-1"></a>    res_b <span class="ot">&lt;-</span> res_b <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .)</span>
-<span id="cb47-46"><a href="#cb47-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_rds</span>(</span>
-<span id="cb47-47"><a href="#cb47-47" aria-hidden="true" tabindex="-1"></a>        res_b,</span>
-<span id="cb47-48"><a href="#cb47-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">file =</span> file_path,</span>
-<span id="cb47-49"><a href="#cb47-49" aria-hidden="true" tabindex="-1"></a>        <span class="at">compress =</span> <span class="st">"gz"</span></span>
-<span id="cb47-50"><a href="#cb47-50" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb47-51"><a href="#cb47-51" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co">#' Perform one confidence interval simulation</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a><span class="co">#' </span></span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a><span class="co">#' @param i an integer representing the current simulation index</span></span>
+<span id="cb50-4"><a href="#cb50-4" aria-hidden="true" tabindex="-1"></a><span class="co">#' @p a powerlmm study parameter object</span></span>
+<span id="cb50-5"><a href="#cb50-5" aria-hidden="true" tabindex="-1"></a><span class="co">#' @fit_tmp a brmsfit object</span></span>
+<span id="cb50-6"><a href="#cb50-6" aria-hidden="true" tabindex="-1"></a>bayes_sim <span class="ot">&lt;-</span> <span class="cf">function</span>(i, p, fit_tmp) {</span>
+<span id="cb50-7"><a href="#cb50-7" aria-hidden="true" tabindex="-1"></a>    fit_b <span class="ot">&lt;-</span> <span class="fu">update</span>(fit_tmp, <span class="at">newdata =</span> <span class="fu">simulate_data</span>(p))</span>
+<span id="cb50-8"><a href="#cb50-8" aria-hidden="true" tabindex="-1"></a>    fit_b <span class="sc">%&gt;%</span> </span>
+<span id="cb50-9"><a href="#cb50-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">calc_overlap_bayes</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb50-10"><a href="#cb50-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">mutate</span>(<span class="at">sim =</span> i)</span>
+<span id="cb50-11"><a href="#cb50-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb50-12"><a href="#cb50-12" aria-hidden="true" tabindex="-1"></a><span class="co"># check for cached simulation</span></span>
+<span id="cb50-13"><a href="#cb50-13" aria-hidden="true" tabindex="-1"></a>file_path <span class="ot">&lt;-</span> <span class="st">"tmp/simulation_overlap_bayes.rds"</span></span>
+<span id="cb50-14"><a href="#cb50-14" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> (<span class="fu">file.exists</span>(file_path)) {</span>
+<span id="cb50-15"><a href="#cb50-15" aria-hidden="true" tabindex="-1"></a>    res_b <span class="ot">&lt;-</span> <span class="fu">read_rds</span>(<span class="at">file =</span> file_path)</span>
+<span id="cb50-16"><a href="#cb50-16" aria-hidden="true" tabindex="-1"></a>} <span class="cf">else</span> {</span>
+<span id="cb50-17"><a href="#cb50-17" aria-hidden="true" tabindex="-1"></a>    MAX_CORES <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">Sys.getenv</span>(<span class="st">"MAX_CORES"</span>))</span>
+<span id="cb50-18"><a href="#cb50-18" aria-hidden="true" tabindex="-1"></a>    N_SIM <span class="ot">&lt;-</span> <span class="fu">as.numeric</span>(<span class="fu">Sys.getenv</span>(<span class="st">"N_SIM_CI"</span>))</span>
+<span id="cb50-19"><a href="#cb50-19" aria-hidden="true" tabindex="-1"></a>    cl <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">makeCluster</span>(MAX_CORES)</span>
+<span id="cb50-20"><a href="#cb50-20" aria-hidden="true" tabindex="-1"></a>    parallel<span class="sc">::</span><span class="fu">clusterEvalQ</span>(</span>
+<span id="cb50-21"><a href="#cb50-21" aria-hidden="true" tabindex="-1"></a>        cl,</span>
+<span id="cb50-22"><a href="#cb50-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">expr =</span> {</span>
+<span id="cb50-23"><a href="#cb50-23" aria-hidden="true" tabindex="-1"></a>            <span class="fu">library</span>(powerlmm)</span>
+<span id="cb50-24"><a href="#cb50-24" aria-hidden="true" tabindex="-1"></a>            <span class="fu">library</span>(brms)</span>
+<span id="cb50-25"><a href="#cb50-25" aria-hidden="true" tabindex="-1"></a>            <span class="fu">library</span>(dplyr)</span>
+<span id="cb50-26"><a href="#cb50-26" aria-hidden="true" tabindex="-1"></a>            <span class="fu">library</span>(tidyr)</span>
+<span id="cb50-27"><a href="#cb50-27" aria-hidden="true" tabindex="-1"></a>        }</span>
+<span id="cb50-28"><a href="#cb50-28" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb50-29"><a href="#cb50-29" aria-hidden="true" tabindex="-1"></a>    <span class="fu">clusterExport</span>(</span>
+<span id="cb50-30"><a href="#cb50-30" aria-hidden="true" tabindex="-1"></a>        cl,</span>
+<span id="cb50-31"><a href="#cb50-31" aria-hidden="true" tabindex="-1"></a>        <span class="fu">c</span>(</span>
+<span id="cb50-32"><a href="#cb50-32" aria-hidden="true" tabindex="-1"></a>            <span class="st">"solve_for_mean"</span>,</span>
+<span id="cb50-33"><a href="#cb50-33" aria-hidden="true" tabindex="-1"></a>            <span class="st">"get_therapist_sd_from_icc"</span>,</span>
+<span id="cb50-34"><a href="#cb50-34" aria-hidden="true" tabindex="-1"></a>            <span class="st">"calc_overlap_bayes"</span></span>
+<span id="cb50-35"><a href="#cb50-35" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb50-36"><a href="#cb50-36" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb50-37"><a href="#cb50-37" aria-hidden="true" tabindex="-1"></a>    res_b <span class="ot">&lt;-</span> parallel<span class="sc">::</span><span class="fu">parLapply</span>(</span>
+<span id="cb50-38"><a href="#cb50-38" aria-hidden="true" tabindex="-1"></a>        cl,</span>
+<span id="cb50-39"><a href="#cb50-39" aria-hidden="true" tabindex="-1"></a>        <span class="fu">seq_len</span>(<span class="fu">ifelse</span>(<span class="fu">is.na</span>(N_SIM), <span class="dv">1000</span>, N_SIM)),</span>
+<span id="cb50-40"><a href="#cb50-40" aria-hidden="true" tabindex="-1"></a>        bayes_sim,</span>
+<span id="cb50-41"><a href="#cb50-41" aria-hidden="true" tabindex="-1"></a>        <span class="at">p =</span> p,</span>
+<span id="cb50-42"><a href="#cb50-42" aria-hidden="true" tabindex="-1"></a>        <span class="at">fit_tmp =</span> fit_tmp</span>
+<span id="cb50-43"><a href="#cb50-43" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb50-44"><a href="#cb50-44" aria-hidden="true" tabindex="-1"></a>    <span class="fu">stopCluster</span>(cl)</span>
+<span id="cb50-45"><a href="#cb50-45" aria-hidden="true" tabindex="-1"></a>    res_b <span class="ot">&lt;-</span> res_b <span class="sc">%&gt;%</span> <span class="fu">do.call</span>(rbind, .)</span>
+<span id="cb50-46"><a href="#cb50-46" aria-hidden="true" tabindex="-1"></a>    <span class="fu">write_rds</span>(</span>
+<span id="cb50-47"><a href="#cb50-47" aria-hidden="true" tabindex="-1"></a>        res_b,</span>
+<span id="cb50-48"><a href="#cb50-48" aria-hidden="true" tabindex="-1"></a>        <span class="at">file =</span> file_path,</span>
+<span id="cb50-49"><a href="#cb50-49" aria-hidden="true" tabindex="-1"></a>        <span class="at">compress =</span> <span class="st">"gz"</span></span>
+<span id="cb50-50"><a href="#cb50-50" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb50-51"><a href="#cb50-51" aria-hidden="true" tabindex="-1"></a>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p><a href="#tbl-ci-sim">Table&nbsp;6</a> summarizes the results from the 1000 simulations. Posterior means are used as estimates, relative bias is slightly lower for posterior medians.</p>
-<div class="cell" data-hash="supplement_cache/html/tbl-ci-sim_2490f6acb877c729f2462ce16401052d">
-<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>res_b <span class="sc">%&gt;%</span></span>
-<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">parameter =</span> .param) <span class="sc">%&gt;%</span></span>
-<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">theta =</span> <span class="fu">case_when</span>(</span>
-<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"tx"</span> <span class="sc">~</span> p<span class="sc">$</span>ATE,</span>
-<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sdu"</span> <span class="sc">~</span> p<span class="sc">$</span>sd_therapist,</span>
-<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sde"</span> <span class="sc">~</span> p<span class="sc">$</span>sd_error,</span>
-<span id="cb48-8"><a href="#cb48-8" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"icc"</span> <span class="sc">~</span> p<span class="sc">$</span>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (p<span class="sc">$</span>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> p<span class="sc">$</span>sd_error<span class="sc">^</span><span class="dv">2</span>),</span>
-<span id="cb48-9"><a href="#cb48-9" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"overlap"</span> <span class="sc">~</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="fu">abs</span>(p<span class="sc">$</span>ATE <span class="sc">/</span> p<span class="sc">$</span>sd_therapist) <span class="sc">/</span> <span class="dv">2</span>),</span>
-<span id="cb48-10"><a href="#cb48-10" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"u3"</span> <span class="sc">~</span> <span class="fu">pnorm</span>(p<span class="sc">$</span>ATE <span class="sc">/</span> p<span class="sc">$</span>sd_therapist),</span>
-<span id="cb48-11"><a href="#cb48-11" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"PS"</span> <span class="sc">~</span> <span class="fu">pnorm</span>((p<span class="sc">$</span>ATE <span class="sc">/</span> p<span class="sc">$</span>sd_therapist) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)),</span>
-<span id="cb48-12"><a href="#cb48-12" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb48-13"><a href="#cb48-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">coverage =</span> lwr <span class="sc">&lt;</span> theta <span class="sc">&amp;</span> upr <span class="sc">&gt;</span> theta</span>
-<span id="cb48-14"><a href="#cb48-14" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb48-15"><a href="#cb48-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(parameter) <span class="sc">%&gt;%</span></span>
-<span id="cb48-16"><a href="#cb48-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
-<span id="cb48-17"><a href="#cb48-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">M_est =</span> <span class="fu">mean</span>(mean),</span>
-<span id="cb48-18"><a href="#cb48-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">Med_est =</span> <span class="fu">mean</span>(median),</span>
-<span id="cb48-19"><a href="#cb48-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_mean =</span> <span class="fu">sd</span>(mean), </span>
-<span id="cb48-20"><a href="#cb48-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">coverage =</span> <span class="fu">mean</span>(coverage),</span>
-<span id="cb48-21"><a href="#cb48-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">theta =</span> <span class="fu">unique</span>(theta),</span>
-<span id="cb48-22"><a href="#cb48-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">lwr =</span> <span class="fu">quantile</span>(mean, <span class="fl">0.025</span>),</span>
-<span id="cb48-23"><a href="#cb48-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">upr =</span> <span class="fu">quantile</span>(mean, <span class="fl">0.975</span>)</span>
-<span id="cb48-24"><a href="#cb48-24" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
-<span id="cb48-25"><a href="#cb48-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb48-26"><a href="#cb48-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">parameter =</span> <span class="fu">case_when</span>(</span>
-<span id="cb48-27"><a href="#cb48-27" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"PS"</span> <span class="sc">~</span> <span class="st">"Prob. superiority"</span>,</span>
-<span id="cb48-28"><a href="#cb48-28" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"icc"</span> <span class="sc">~</span> <span class="st">"ICC"</span>,</span>
-<span id="cb48-29"><a href="#cb48-29" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"overlap"</span> <span class="sc">~</span> <span class="st">"Overlap"</span>,</span>
-<span id="cb48-30"><a href="#cb48-30" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sde"</span> <span class="sc">~</span> <span class="st">"Error SD, $</span><span class="sc">\\</span><span class="st">sigma_e$"</span>,</span>
-<span id="cb48-31"><a href="#cb48-31" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sdu"</span> <span class="sc">~</span> <span class="st">"Therapist SD, $</span><span class="sc">\\</span><span class="st">sigma_u$"</span>,</span>
-<span id="cb48-32"><a href="#cb48-32" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"tx"</span> <span class="sc">~</span> <span class="st">"Treatment effect $</span><span class="sc">\\</span><span class="st">delta_1$"</span>,</span>
-<span id="cb48-33"><a href="#cb48-33" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"u3"</span> <span class="sc">~</span> <span class="st">"Cohen's *U*&lt;sub&gt;3&lt;/sub&gt;"</span>,</span>
-<span id="cb48-34"><a href="#cb48-34" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> parameter</span>
-<span id="cb48-35"><a href="#cb48-35" aria-hidden="true" tabindex="-1"></a>        ),</span>
-<span id="cb48-36"><a href="#cb48-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">rel_bias =</span> (M_est <span class="sc">-</span> theta) <span class="sc">/</span> theta,</span>
-<span id="cb48-37"><a href="#cb48-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">rel_bias_med =</span> (Med_est <span class="sc">-</span> theta) <span class="sc">/</span> theta</span>
-<span id="cb48-38"><a href="#cb48-38" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb48-39"><a href="#cb48-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(</span>
-<span id="cb48-40"><a href="#cb48-40" aria-hidden="true" tabindex="-1"></a>        <span class="at">Parameter =</span> parameter,</span>
-<span id="cb48-41"><a href="#cb48-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Estimate"</span> <span class="ot">=</span> M_est,</span>
-<span id="cb48-42"><a href="#cb48-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SD(Est.)"</span> <span class="ot">=</span> sd_mean,</span>
-<span id="cb48-43"><a href="#cb48-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Coverage"</span> <span class="ot">=</span> coverage,</span>
-<span id="cb48-44"><a href="#cb48-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">"True"</span> <span class="ot">=</span> theta, </span>
-<span id="cb48-45"><a href="#cb48-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">"2.5th"</span> <span class="ot">=</span> lwr,</span>
-<span id="cb48-46"><a href="#cb48-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">"97.5th"</span> <span class="ot">=</span> upr,</span>
-<span id="cb48-47"><a href="#cb48-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Rel. bias (Est.)"</span> <span class="ot">=</span> rel_bias,</span>
-<span id="cb48-48"><a href="#cb48-48" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb48-49"><a href="#cb48-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<p>Let’s summarize the results from the 1000 simulations.</p>
+<div class="cell" data-hash="supplement_cache/html/tbl-ci-sim_2721b225c77bc63f7fc85faa227dac98">
+<div class="sourceCode cell-code" id="cb51"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>res_b <span class="sc">%&gt;%</span></span>
+<span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(<span class="at">parameter =</span> .param) <span class="sc">%&gt;%</span></span>
+<span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>        <span class="at">theta =</span> <span class="fu">case_when</span>(</span>
+<span id="cb51-5"><a href="#cb51-5" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"tx"</span> <span class="sc">~</span> p<span class="sc">$</span>ATE,</span>
+<span id="cb51-6"><a href="#cb51-6" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sdu"</span> <span class="sc">~</span> p<span class="sc">$</span>sd_therapist,</span>
+<span id="cb51-7"><a href="#cb51-7" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sde"</span> <span class="sc">~</span> p<span class="sc">$</span>sd_error,</span>
+<span id="cb51-8"><a href="#cb51-8" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"icc"</span> <span class="sc">~</span> p<span class="sc">$</span>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">/</span> (p<span class="sc">$</span>sd_therapist<span class="sc">^</span><span class="dv">2</span> <span class="sc">+</span> p<span class="sc">$</span>sd_error<span class="sc">^</span><span class="dv">2</span>),</span>
+<span id="cb51-9"><a href="#cb51-9" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"overlap"</span> <span class="sc">~</span> <span class="dv">2</span> <span class="sc">*</span> <span class="fu">pnorm</span>(<span class="sc">-</span><span class="fu">abs</span>(p<span class="sc">$</span>ATE <span class="sc">/</span> p<span class="sc">$</span>sd_therapist) <span class="sc">/</span> <span class="dv">2</span>),</span>
+<span id="cb51-10"><a href="#cb51-10" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"u3"</span> <span class="sc">~</span> <span class="fu">pnorm</span>(p<span class="sc">$</span>ATE <span class="sc">/</span> p<span class="sc">$</span>sd_therapist),</span>
+<span id="cb51-11"><a href="#cb51-11" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"PS"</span> <span class="sc">~</span> <span class="fu">pnorm</span>((p<span class="sc">$</span>ATE <span class="sc">/</span> p<span class="sc">$</span>sd_therapist) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)),</span>
+<span id="cb51-12"><a href="#cb51-12" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb51-13"><a href="#cb51-13" aria-hidden="true" tabindex="-1"></a>        <span class="at">coverage =</span> lwr <span class="sc">&lt;</span> theta <span class="sc">&amp;</span> upr <span class="sc">&gt;</span> theta</span>
+<span id="cb51-14"><a href="#cb51-14" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb51-15"><a href="#cb51-15" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(parameter) <span class="sc">%&gt;%</span></span>
+<span id="cb51-16"><a href="#cb51-16" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(</span>
+<span id="cb51-17"><a href="#cb51-17" aria-hidden="true" tabindex="-1"></a>        <span class="at">M_est =</span> <span class="fu">mean</span>(mean),</span>
+<span id="cb51-18"><a href="#cb51-18" aria-hidden="true" tabindex="-1"></a>        <span class="at">Med_est =</span> <span class="fu">mean</span>(median),</span>
+<span id="cb51-19"><a href="#cb51-19" aria-hidden="true" tabindex="-1"></a>        <span class="at">sd_mean =</span> <span class="fu">sd</span>(mean), </span>
+<span id="cb51-20"><a href="#cb51-20" aria-hidden="true" tabindex="-1"></a>        <span class="at">coverage =</span> <span class="fu">mean</span>(coverage),</span>
+<span id="cb51-21"><a href="#cb51-21" aria-hidden="true" tabindex="-1"></a>        <span class="at">theta =</span> <span class="fu">unique</span>(theta),</span>
+<span id="cb51-22"><a href="#cb51-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">lwr =</span> <span class="fu">quantile</span>(mean, <span class="fl">0.025</span>),</span>
+<span id="cb51-23"><a href="#cb51-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">upr =</span> <span class="fu">quantile</span>(mean, <span class="fl">0.975</span>)</span>
+<span id="cb51-24"><a href="#cb51-24" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span></span>
+<span id="cb51-25"><a href="#cb51-25" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb51-26"><a href="#cb51-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">parameter =</span> <span class="fu">case_when</span>(</span>
+<span id="cb51-27"><a href="#cb51-27" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"PS"</span> <span class="sc">~</span> <span class="st">"Prob. superiority"</span>,</span>
+<span id="cb51-28"><a href="#cb51-28" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"icc"</span> <span class="sc">~</span> <span class="st">"ICC"</span>,</span>
+<span id="cb51-29"><a href="#cb51-29" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"overlap"</span> <span class="sc">~</span> <span class="st">"Overlap"</span>,</span>
+<span id="cb51-30"><a href="#cb51-30" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sde"</span> <span class="sc">~</span> <span class="st">"Error SD, $</span><span class="sc">\\</span><span class="st">sigma_e$"</span>,</span>
+<span id="cb51-31"><a href="#cb51-31" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"sdu"</span> <span class="sc">~</span> <span class="st">"Therapist SD, $</span><span class="sc">\\</span><span class="st">sigma_u$"</span>,</span>
+<span id="cb51-32"><a href="#cb51-32" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"tx"</span> <span class="sc">~</span> <span class="st">"Treatment effect, $</span><span class="sc">\\</span><span class="st">delta_1$"</span>,</span>
+<span id="cb51-33"><a href="#cb51-33" aria-hidden="true" tabindex="-1"></a>            parameter <span class="sc">==</span> <span class="st">"u3"</span> <span class="sc">~</span> <span class="st">"Cohen's *U*&lt;sub&gt;3&lt;/sub&gt;"</span>,</span>
+<span id="cb51-34"><a href="#cb51-34" aria-hidden="true" tabindex="-1"></a>            <span class="cn">TRUE</span> <span class="sc">~</span> parameter</span>
+<span id="cb51-35"><a href="#cb51-35" aria-hidden="true" tabindex="-1"></a>        ),</span>
+<span id="cb51-36"><a href="#cb51-36" aria-hidden="true" tabindex="-1"></a>        <span class="at">rel_bias =</span> (M_est <span class="sc">-</span> theta) <span class="sc">/</span> theta,</span>
+<span id="cb51-37"><a href="#cb51-37" aria-hidden="true" tabindex="-1"></a>        <span class="at">rel_bias_med =</span> (Med_est <span class="sc">-</span> theta) <span class="sc">/</span> theta</span>
+<span id="cb51-38"><a href="#cb51-38" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-39"><a href="#cb51-39" aria-hidden="true" tabindex="-1"></a>    <span class="fu">select</span>(</span>
+<span id="cb51-40"><a href="#cb51-40" aria-hidden="true" tabindex="-1"></a>        <span class="at">Parameter =</span> parameter,</span>
+<span id="cb51-41"><a href="#cb51-41" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Estimate"</span> <span class="ot">=</span> M_est,</span>
+<span id="cb51-42"><a href="#cb51-42" aria-hidden="true" tabindex="-1"></a>        <span class="st">"SD(Est.)"</span> <span class="ot">=</span> sd_mean,</span>
+<span id="cb51-43"><a href="#cb51-43" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Coverage"</span> <span class="ot">=</span> coverage,</span>
+<span id="cb51-44"><a href="#cb51-44" aria-hidden="true" tabindex="-1"></a>        <span class="st">"True"</span> <span class="ot">=</span> theta, </span>
+<span id="cb51-45"><a href="#cb51-45" aria-hidden="true" tabindex="-1"></a>        <span class="st">"2.5th"</span> <span class="ot">=</span> lwr,</span>
+<span id="cb51-46"><a href="#cb51-46" aria-hidden="true" tabindex="-1"></a>        <span class="st">"97.5th"</span> <span class="ot">=</span> upr,</span>
+<span id="cb51-47"><a href="#cb51-47" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Rel. bias (Est.)"</span> <span class="ot">=</span> rel_bias,</span>
+<span id="cb51-48"><a href="#cb51-48" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb51-49"><a href="#cb51-49" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="tbl-ci-sim" class="anchored">
 <table class="table table-sm table-striped small">
-<caption>Table&nbsp;6: Simulation Results for the 95% CIs</caption>
+<caption>Table&nbsp;6: Simulation results (therapist effects)</caption>
 <colgroup>
 <col style="width: 31%">
-<col style="width: 10%">
-<col style="width: 10%">
-<col style="width: 10%">
+<col style="width: 9%">
+<col style="width: 9%">
+<col style="width: 9%">
 <col style="width: 5%">
 <col style="width: 6%">
 <col style="width: 7%">
@@ -1796,7 +1831,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <td style="text-align: right;">-0.01</td>
 </tr>
 <tr class="even">
-<td style="text-align: left;">Treatment effect <span class="math inline">\delta_1</span></td>
+<td style="text-align: left;">Treatment effect, <span class="math inline">\delta_1</span></td>
 <td style="text-align: right;">0.31</td>
 <td style="text-align: right;">0.11</td>
 <td style="text-align: right;">0.95</td>
@@ -1820,29 +1855,30 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </div>
+<p><a href="#tbl-ci-sim">Table&nbsp;6</a> shows that all effects are unbiased and that the 95% CIs have nominal coverage. Posterior means are used as estimates; relative bias is slightly lower for posterior medians. It should be noted that the estimates will likely be biased with smaller sample sizes.</p>
 <p><a href="#tbl-ci-sim-power">Table&nbsp;7</a> shows the power for the treatment effect and the probability of superiority.</p>
-<div class="cell" data-hash="supplement_cache/html/tbl-ci-sim-power_71be6d42ffb1f9e46734a31d7596e813">
-<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a>res_b <span class="sc">%&gt;%</span> </span>
-<span id="cb49-2"><a href="#cb49-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.param <span class="sc">==</span> <span class="st">"tx"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb49-3"><a href="#cb49-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(.param) <span class="sc">%&gt;%</span> </span>
-<span id="cb49-4"><a href="#cb49-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">power =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">mean</span>(lwr <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> upr <span class="sc">&gt;=</span> <span class="dv">0</span>)) <span class="sc">%&gt;%</span> </span>
-<span id="cb49-5"><a href="#cb49-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(</span>
-<span id="cb49-6"><a href="#cb49-6" aria-hidden="true" tabindex="-1"></a>    res_b <span class="sc">%&gt;%</span> </span>
-<span id="cb49-7"><a href="#cb49-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(.param <span class="sc">==</span> <span class="st">"PS"</span>) <span class="sc">%&gt;%</span> </span>
-<span id="cb49-8"><a href="#cb49-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">group_by</span>(.param) <span class="sc">%&gt;%</span> </span>
-<span id="cb49-9"><a href="#cb49-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarise</span>(<span class="at">power =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">mean</span>(lwr <span class="sc">&lt;=</span> <span class="fl">0.5</span> <span class="sc">&amp;</span> upr <span class="sc">&gt;=</span> <span class="fl">0.5</span>))</span>
-<span id="cb49-10"><a href="#cb49-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb49-11"><a href="#cb49-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
-<span id="cb49-12"><a href="#cb49-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">.param =</span> <span class="fu">case_when</span>(</span>
-<span id="cb49-13"><a href="#cb49-13" aria-hidden="true" tabindex="-1"></a>            .param  <span class="sc">==</span> <span class="st">"PS"</span> <span class="sc">~</span> <span class="st">"Prob. superiority"</span>,</span>
-<span id="cb49-14"><a href="#cb49-14" aria-hidden="true" tabindex="-1"></a>            .param  <span class="sc">==</span> <span class="st">"tx"</span> <span class="sc">~</span> <span class="st">"Treatment effect $</span><span class="sc">\\</span><span class="st">delta_1$"</span></span>
-<span id="cb49-15"><a href="#cb49-15" aria-hidden="true" tabindex="-1"></a>        )</span>
-<span id="cb49-16"><a href="#cb49-16" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb49-17"><a href="#cb49-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(</span>
-<span id="cb49-18"><a href="#cb49-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Parameter"</span> <span class="ot">=</span> .param,</span>
-<span id="cb49-19"><a href="#cb49-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Power"</span> <span class="ot">=</span> power</span>
-<span id="cb49-20"><a href="#cb49-20" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
-<span id="cb49-21"><a href="#cb49-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell" data-hash="supplement_cache/html/tbl-ci-sim-power_f96a22551c706f2d3854eae266a05630">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>res_b <span class="sc">%&gt;%</span> </span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>    <span class="fu">filter</span>(.param <span class="sc">==</span> <span class="st">"tx"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">group_by</span>(.param) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-4"><a href="#cb52-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">summarize</span>(<span class="at">power =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">mean</span>(lwr <span class="sc">&lt;=</span> <span class="dv">0</span> <span class="sc">&amp;</span> upr <span class="sc">&gt;=</span> <span class="dv">0</span>)) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-5"><a href="#cb52-5" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rbind</span>(</span>
+<span id="cb52-6"><a href="#cb52-6" aria-hidden="true" tabindex="-1"></a>    res_b <span class="sc">%&gt;%</span> </span>
+<span id="cb52-7"><a href="#cb52-7" aria-hidden="true" tabindex="-1"></a>        <span class="fu">filter</span>(.param <span class="sc">==</span> <span class="st">"PS"</span>) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-8"><a href="#cb52-8" aria-hidden="true" tabindex="-1"></a>        <span class="fu">group_by</span>(.param) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-9"><a href="#cb52-9" aria-hidden="true" tabindex="-1"></a>        <span class="fu">summarise</span>(<span class="at">power =</span> <span class="dv">1</span> <span class="sc">-</span> <span class="fu">mean</span>(lwr <span class="sc">&lt;=</span> <span class="fl">0.5</span> <span class="sc">&amp;</span> upr <span class="sc">&gt;=</span> <span class="fl">0.5</span>))</span>
+<span id="cb52-10"><a href="#cb52-10" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-11"><a href="#cb52-11" aria-hidden="true" tabindex="-1"></a>    <span class="fu">mutate</span>(</span>
+<span id="cb52-12"><a href="#cb52-12" aria-hidden="true" tabindex="-1"></a>        <span class="at">.param =</span> <span class="fu">case_when</span>(</span>
+<span id="cb52-13"><a href="#cb52-13" aria-hidden="true" tabindex="-1"></a>            .param  <span class="sc">==</span> <span class="st">"PS"</span> <span class="sc">~</span> <span class="st">"Prob. superiority"</span>,</span>
+<span id="cb52-14"><a href="#cb52-14" aria-hidden="true" tabindex="-1"></a>            .param  <span class="sc">==</span> <span class="st">"tx"</span> <span class="sc">~</span> <span class="st">"Treatment effect, $</span><span class="sc">\\</span><span class="st">delta_1$"</span></span>
+<span id="cb52-15"><a href="#cb52-15" aria-hidden="true" tabindex="-1"></a>        )</span>
+<span id="cb52-16"><a href="#cb52-16" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-17"><a href="#cb52-17" aria-hidden="true" tabindex="-1"></a>    <span class="fu">rename</span>(</span>
+<span id="cb52-18"><a href="#cb52-18" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Parameter"</span> <span class="ot">=</span> .param,</span>
+<span id="cb52-19"><a href="#cb52-19" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Power"</span> <span class="ot">=</span> power</span>
+<span id="cb52-20"><a href="#cb52-20" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb52-21"><a href="#cb52-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">kable</span>(<span class="at">digits =</span> <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div id="tbl-ci-sim-power" class="anchored">
 <table class="table table-sm table-striped small">
@@ -1855,7 +1891,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </thead>
 <tbody>
 <tr class="odd">
-<td style="text-align: left;">Treatment effect <span class="math inline">\delta_1</span></td>
+<td style="text-align: left;">Treatment effect, <span class="math inline">\delta_1</span></td>
 <td style="text-align: right;">0.81</td>
 </tr>
 <tr class="even">

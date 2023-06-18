@@ -7,6 +7,14 @@ code-fold: false
 html-math-method: katex
 ---
 
+```{r}
+#| echo: false
+mask <- function(string) {
+    ifelse(Sys.getenv("QUARTO_PROFILE") == "blinded", "*Masked*", string)
+}
+
+```
+
 ::: {.content-visible when-profile="blinded"}
 :::{.callout-important}
 This document is the blinded version intended for peer review.
@@ -14,7 +22,7 @@ This document is the blinded version intended for peer review.
 :::
 
 ## Introduction
-This online supplement for *A Causal Inference Perspective on Therapist Effects* (`r ifelse(Sys.getenv("QUARTO_PROFILE") == "blinded", "*Masked*", "Magnusson")`, 2023, in preparation) contains the code for all calculations, simulations, and figures presented in the article.
+This online supplement for *A Causal Inference Perspective on Therapist Effects* (`r mask( "Magnusson")`, 2023, in preparation) contains the code for all calculations, simulations, and figures presented in the article.
 
 :::{.content-hidden when-profile="blinded"}
 - [Preprint](https://psyarxiv.com/f7mvz)
@@ -78,7 +86,7 @@ solve_for_mean <- function(sd, n2) {
     2 * sqrt(sd^2 * (n2 * 2 - 1) / (n2 * 2))
 }
 
-#' Get the therapist SD from thee ICC
+#' Get the therapist SD from the ICC
 #' 
 #' @param icc the ICC
 #' @param sd_error the error SD
@@ -90,12 +98,12 @@ get_therapist_sd_from_icc <- function(icc, sd_error) {
 
 #' Simulate confounded therapist effects 
 #' 
-#' @param n1
-#' @param n2
-#' @param sd_therapist
-#' @param sd_therapist_confounding
-#' @param sd_error
-#' @param ATE
+#' @param n1 the number of patients per therapist
+#' @param n2 the number of therapists per treatment group
+#' @param sd_therapist the random therapist SD
+#' @param sd_therapist_confounding the SD added to sd_therapist due to confounding
+#' @param sd_error the random error SD
+#' @param ATE average treatment effect
 #' 
 #' @returns a data.frame
 simulate_therapist_effect_confounding <- function(
@@ -186,7 +194,7 @@ simulate_therapist_effect_confounding <- function(
 }
 ```
 
-To run the simulation we pass the simulation function `simulate_therapist_effect_confounding` and use a custom `powerlmm` model to setup all the parameters.
+To run the simulation, we pass the simulation function `simulate_therapist_effect_confounding` and use a custom `powerlmm` model to set up all the parameters.
 
 ```{r, sim-params}
 #| code-fold: false
@@ -194,6 +202,7 @@ ds <- study_design(custom = TRUE)
 ICC <- 0.05
 sd_error <- 1.5
 sd_therapist <- sqrt((ICC * sd_error^2) / (1 - ICC))
+# check ICC
 sd_therapist^2 / (sd_therapist^2 + sd_error^2)
 
 p <- powerlmm:::study_parameters.plcp_design_custom(
@@ -209,9 +218,11 @@ p$sd_therapist_confounding <- get_therapist_sd_from_icc(
     icc = 0.075, 
     sd_error = p$sd_error
 )
+# sd within groups
 tot_sd <- sqrt(
     p$sd_error^2 + p$sd_therapist^2 + p$sd_therapist_confounding^2
 )
+# Cohen's d = 0.5
 p$ATE <- 0.5 * tot_sd
 p$tot_n <- 2 * p$n1 * p$n2
 p$df <- 2 * p$n2 - 2
@@ -232,7 +243,7 @@ p$thetas_RE <- list(
 )
 ```
 
-We then specify the statistical models
+We then specify the statistical models.
 
 ```{r, sim-models}
 #| code-fold: false
@@ -485,7 +496,7 @@ ICC <- p$sd_therapist^2 / (p$sd_therapist^2 + p$sd_error^2)
 ### Plot Overlap
 @fig-overlap visualizes the overlapping therapist effect distributions.
 ```{r, fig-overlap}
-#| fig-cap: The proportion of therapists from each treatment group that have overlapping effects. 
+#| fig-cap: The proportion of therapists from each treatment group with overlapping effects. 
 #| fig-height: 3
 SD <- sqrt(0.05)
 mean1 <- 0.2
@@ -653,9 +664,9 @@ poly_u3 <- rbind(
 )
 # colors
 overlap_fill <- "#2980b9"
-u3_fill <- "#3498db"
+treatment_fill <- "#3498db"
 control_fill <- "#7f8c8d"
-treatment_fill <- "#2c3e50"
+u3_fill <- "#2c3e50"
 # plot
 p0 <- ggplot(
     df_control,
@@ -827,7 +838,7 @@ kable(digits = 2)
 ## Confidence Intervals
 We will compute confidence intervals for the therapist effects measures to draw inferences about the population values. The simplest way to construct CIs for the ICCs, and overlap measures is to use parametric bootstrapping or a Bayesian model. I will provide an example using Bayesian methods, but a parametric bootstrap using `lme4::bootMer` would look very similar. 
 
-For this example, I will increase the sample size to 40 therapists per treatment group. Robust inference regarding therapist effects will require large sample sizes.
+For this example, I will increase the sample size to 40 therapists per treatment group. Robust inference regarding therapist effects will require large sample sizes. Moreover, this is the required sample size to reach 80% power for *d* = 0.2.
 
 ```{r}
 p$sd_therapist_confounding <- 0
@@ -850,17 +861,20 @@ if (file.exists(file_path)) {
 ```
 
 The Bayesian multilevel model is fit using `brms`.
-```{r, ci-bayes}
-#| message: false
+```{r, ci-brms-fit}
 fit_tmp <- brm(
     y_random ~ Z + (1 | therapist_random), 
     data = d,
-    file = "tmp/fit_brms"
+    file = "tmp/fit_brms",
+    refresh = 0
 )
+```
+
+```{r, ci-brms-summary}
 fit_tmp
 ```
 
-We then calculate all effect sizes and construct confidence intervals using the 2.5th and 97.5th percentiles of the posterior distributions, as shown in @tbl-bayes-ci.
+We then calculate all effect sizes and construct confidence intervals using the 2.5th and 97.5th percentiles of the posterior distributions, as shown in @tbl-bayes-ci. 
 
 ```{r}
 #' Calculate various posterior therapist effects measures
@@ -985,10 +999,10 @@ if (file.exists(file_path)) {
 }
 ```
 
-@tbl-ci-sim summarizes the results from the `r filter(res_b, .param == "tx") %>% nrow` simulations. Posterior means are used as estimates; relative bias is slightly lower for posterior medians.
+Let's summarize the results from the `r filter(res_b, .param == "tx") %>% nrow` simulations. 
 
 ```{r, tbl-ci-sim}
-#| tbl-cap: Simulation Results for the 95% CIs
+#| tbl-cap: Simulation results (therapist effects)
 res_b %>%
     rename(parameter = .param) %>%
     mutate(
@@ -1040,6 +1054,9 @@ res_b %>%
     kable(digits = 2)
 
 ```
+
+
+@tbl-ci-sim shows that all effects are unbiased and that the 95% CIs have nominal coverage. Posterior means are used as estimates; relative bias is slightly lower for posterior medians. It should be noted that the estimates will likely be biased with smaller sample sizes.
 
 @tbl-ci-sim-power shows the power for the treatment effect and the probability of superiority.
 
