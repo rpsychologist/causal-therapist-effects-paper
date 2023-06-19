@@ -6,6 +6,6 @@ project:
 
 format:
     pdf: 
-        output-file: magnusson-2023-causal-therapist-effects-blinded.pdf
+        output-file: supplement-2023-causal-therapist-effects-blinded.pdf
 code-tools: false
 filters: [blinded.lua]
